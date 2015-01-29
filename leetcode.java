@@ -921,6 +921,33 @@ public class Solution {
     }
 }
 
+/* instruction: Given an array of non-negative integers, you are initially positioned at the first index of the array.
+ 
+ Each element in the array represents your maximum jump length at that position.
+ 
+ Your goal is to reach the last index in the minimum number of jumps.
+*/
+public class Solution {
+    public int jump(int[] A) {
+        int length = A.length;
+        if(length <= 1)
+            return 0;
+        int high = 0, low = 0;
+        int count = 0;
+        while(high < length - 1)
+        {
+            int prehigh = high;
+            for(int i = low; i <= prehigh; i ++)
+            {
+                high = Math.max(A[i] + i, high);
+            }
+            low = prehigh + 1;
+            count ++;
+        }
+        return count;
+    }
+}
+
 /* instruction: Compare two version numbers version1 and version1.
  If version1 > version2 return 1, if version1 < version2 return -1, otherwise return 0. */
 public class Solution {
@@ -1126,6 +1153,38 @@ public class Solution {
             }
         }
         return A.length - count;
+    }
+}
+
+/* instruction: Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram. */
+public class Solution {
+    public int largestRectangleArea(int[] height) {
+        int length = height.length;
+        if(length == 0)
+            return 0;
+        int area = 0, i = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        while(i < length)
+        {
+            if(stack.isEmpty() || height[i] >= height[stack.peek()])
+            {
+                stack.push(i);
+                i ++;
+            }
+            else
+            {
+                int high = stack.pop();
+                int size = height[high] * (stack.isEmpty()? i: i - stack.peek() - 1);
+                area = Math.max(size, area);
+            }
+        }
+        while(!stack.isEmpty())
+        {
+            int high = stack.pop();
+            int size = height[high] * (stack.isEmpty()? i: i - stack.peek() - 1);
+            area = Math.max(size, area);
+        }
+        return area;
     }
 }
 
@@ -3001,6 +3060,186 @@ public void replaceSpace(char []array, int length){
             array[newlen] = array[i];
             newlen --;
         }
+    }
+}
+
+/* instruction: merge a series of non-overlapping intervals */
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+public class Solution {
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        int length = intervals.size();
+        List<Interval> list = new LinkedList<Interval>();
+        if(length == 0)
+        {
+            list.add(newInterval);
+            return list;
+        }
+        /* find an interval for the start value in newInterval */
+        int startPos = -1, endPos = -1;
+        for(int i = 0; i < length; i ++)
+        {
+            if(intervals.get(i).start <= newInterval.start && intervals.get(i).end >= newInterval.start)
+            {
+                startPos = i;
+            }
+            if(intervals.get(i).start <= newInterval.end && intervals.get(i).end >= newInterval.end)
+            {
+                endPos = i;
+                break;
+            }
+        }
+        if(startPos == -1 && endPos == -1)
+        {
+            /* if the new interval doesn't overlap with any existing intervals */
+            /* find the place it should lay */
+            boolean added = false;
+            for(int i = 0; i < length - 1; i ++)
+            {
+                if(intervals.get(i).end < newInterval.start && intervals.get(i + 1).start > newInterval.start)
+                {
+                    startPos = i;
+                    break;
+                }
+            }
+            if(newInterval.start > intervals.get(length - 1).end)
+                startPos = length - 1;
+            if(startPos == -1 && newInterval.start > intervals.get(0).start)
+                startPos = 0;
+            for(int i = 1; i < length; i ++)
+            {
+                if(intervals.get(i - 1).end < newInterval.end && intervals.get(i).start > newInterval.end)
+                {
+                    endPos = i - 1;
+                }
+            }
+            if(newInterval.end < intervals.get(0).start)
+                endPos = startPos;
+            else if(endPos == -1 && newInterval.end < intervals.get(length - 1).end)
+                endPos = length - 2;
+            else if(endPos == -1)
+                endPos = length - 1;
+            for(int i = 0; i <= startPos; i ++)
+            {
+                list.add(intervals.get(i));
+            }
+            list.add(newInterval);
+            for(int i = endPos + 1; i < length; i ++)
+            {
+                list.add(intervals.get(i));
+            }
+        }
+        else if(startPos == -1 && endPos != -1)
+        {
+            int newEnding = Math.max(newInterval.end, intervals.get(endPos).end);
+            for(int i = 0; i < length - 1; i ++)
+            {
+                if(intervals.get(i).end < newInterval.start && intervals.get(i + 1).start > newInterval.start)
+                {
+                    startPos = i;
+                    break;
+                }
+            }
+            if(startPos == -1 && newInterval.start > intervals.get(0).start)
+                startPos = 0;
+            for(int i = 0; i <= startPos; i ++)
+            {
+                list.add(intervals.get(i));
+            }
+            Interval tmp = new Interval(newInterval.start, newEnding);
+            list.add(tmp);
+            for(int i = endPos + 1; i < length; i ++)
+            {
+                list.add(intervals.get(i));
+            }
+        }
+        else if(startPos != -1 && endPos == -1)
+        {
+            int newStart = Math.min(newInterval.start, intervals.get(startPos).start);
+            for(int i = 1; i < length; i ++)
+            {
+                if(intervals.get(i - 1).end < newInterval.end && intervals.get(i).start > newInterval.end)
+                {
+                    endPos = i - 1;
+                }
+            }
+            if(endPos == -1)
+                endPos = length - 1;
+            for(int i = 0; i < startPos; i ++)
+            {
+                list.add(intervals.get(i));
+            }
+            Interval tmp = new Interval(newStart, newInterval.end);
+            list.add(tmp);
+            for(int i = endPos + 1; i < length; i ++)
+                list.add(intervals.get(i));
+        }
+        else
+        {
+            if(startPos != endPos)
+            {
+                if(detectMerge(newInterval, intervals.get(startPos), intervals.get(endPos)))
+                {
+                    intervals.get(startPos).end = intervals.get(endPos).end;
+                    for(int i = 0; i <= startPos; i ++)
+                        list.add(intervals.get(i));
+                    for(int i = endPos + 1; i < length; i ++)
+                        list.add(intervals.get(i));
+                }
+                else
+                {
+                    int newStart = Math.min(newInterval.start, intervals.get(startPos).start);
+                    int newEnding = Math.max(newInterval.end, intervals.get(endPos).end);
+                    for(int i = 0; i <= startPos; i ++)
+                        list.add(intervals.get(i));
+                    list.add(new Interval(newStart, newEnding));
+                    for(int i = endPos + 1; i < length; i ++)
+                        list.add(intervals.get(i));
+                }
+            }
+            else
+                list.addAll(intervals);
+        }
+        return list;
+    }
+    public boolean detectMerge(Interval toAdd, Interval a, Interval b)
+    {
+        if(toAdd.start <= a.end && toAdd.end >= b.start)
+            return true;
+        return false;
+    }
+}
+
+/* instruction: Given an unsorted array of integers, find the length of the longest consecutive elements sequence. */
+public class Solution {
+    public int longestConsecutive(int[] num) {
+        int length = num.length;
+        if(length == 0)
+            return 0;
+        Arrays.sort(num);
+        int longest = 1, consecutive = 1;
+        for(int i = 0; i < length - 1; i ++)
+        {
+            if(num[i] + 1 == num[i + 1])
+                consecutive ++;
+            else if(num[i] == num[i + 1])
+                continue;
+            else
+            {
+                longest = Math.max(consecutive, longest);
+                consecutive = 1;
+            }
+            
+        }
+        longest = Math.max(consecutive, longest);
+        return longest;
     }
 }
 
