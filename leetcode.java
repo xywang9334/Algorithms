@@ -1324,6 +1324,30 @@ public class Solution {
     }
 }
 
+/* instruction: Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below. */
+public class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int size = triangle.size();
+        if(size == 0)
+            return 0;
+        if(size == 1)
+            return triangle.get(0).get(0);
+        int []minimumPath = new int[size];
+        for(int i = 0; i < size; i ++)
+        {
+            minimumPath[i] = triangle.get(size - 1).get(i);
+        }
+        for(int j = size - 2; j >= 0; j --)
+        {
+            for(int i = 0; i < triangle.get(j).size() ; i ++)
+            {
+                minimumPath[i] = Math.min(minimumPath[i + 1], minimumPath[i]) + triangle.get(j).get(i);
+            }
+        }
+        return minimumPath[0];
+    }
+}
+
 /* instruction: Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water. */
 public class Solution {
     public int maxArea(int[] height) {
@@ -1528,6 +1552,43 @@ public class Solution {
     }
 }
 
+/* instruction: Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+ 
+ Each number in C may only be used once in the combination.
+ Duplicates are allowed */
+public class Solution {
+    private List<List<Integer>> list;
+    private HashSet<List<Integer>> hash;
+    public List<List<Integer>> combinationSum2(int[] num, int target) {
+        int length = num.length;
+        list = new LinkedList<List<Integer>>();
+        if(length == 0)
+            return list;
+        Arrays.sort(num);
+        List<Integer> l = new LinkedList<Integer>();
+        hash = new HashSet<List<Integer>>();
+        FindCombination(l, target, 0, num);
+        return list;
+    }
+    public void FindCombination(List<Integer> l, int target, int last, int []num)
+    {
+        if(target == 0 && !hash.contains(l))
+        {
+            list.add(l);
+            hash.add(l);
+        }
+        for(int i = last; i < num.length; i ++)
+        {
+            if(target < num[i])
+                return;
+            List<Integer> list = new LinkedList<Integer>();
+            list.addAll(l);
+            list.add(num[i]);
+            FindCombination(list, target - num[i], i + 1, num);
+        }
+    }
+}
+
 
 
 /* new version */
@@ -1548,6 +1609,30 @@ public int maxProfit(int[] prices){
             max_profit = profit;
     }
     return max_profit;
+}
+
+/* Say you have an array for which the ith element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete at most two transactions. */
+public class Solution {
+    public int maxProfit(int[] prices) {
+        int length = prices.length;
+        if(length == 0)
+            return 0;
+        int never = Integer.MIN_VALUE;
+        int one_transaction_hold_early = Integer.MIN_VALUE;
+        int two_transaction = Integer.MIN_VALUE;
+        int one_transaction_hold_late = Integer.MIN_VALUE;
+
+        for(int i = 0; i < length; i ++)
+        {
+            never = Math.max(never, -prices[i]);
+            one_transaction_hold_early = Math.max(one_transaction_hold_early, never + prices[i]);
+            one_transaction_hold_late = Math.max(one_transaction_hold_late, one_transaction_hold_early - prices[i]);
+            two_transaction = Math.max(two_transaction, one_transaction_hold_late + prices[i]);
+        }
+        return Math.max(never, Math.max(one_transaction_hold_early, two_transaction));
+    }
 }
 
 /* instruction: Given a binary tree, find its minimum depth. */
@@ -2348,6 +2433,32 @@ public class Solution {
     }
 }
 
+/* instruction: Rotate an array of n elements to the right by k steps. */
+public class Solution {
+    public void rotate(int[] nums, int k) {
+        int length = nums.length;
+        if(length == 0)
+            return;
+        if(k > length)
+            k = k % length;
+        if(k > length)
+            k = length;
+        rotateArray(nums, 0, length - k);
+        rotateArray(nums, length - k , length);
+        rotateArray(nums, 0, length);
+        
+    }
+    public void rotateArray(int []nums, int start, int end)
+    {
+        for(int i = start; i < (start + end) / 2; i ++)
+        {
+            int temp = nums[end - (i - start) - 1];
+            nums[end - (i - start) - 1] = nums[i];
+            nums[i] = temp;
+        }
+    }
+}
+
 /* instruction:
  Suppose a sorted array is rotated at some pivot unknown to you beforehand.
  
@@ -2660,6 +2771,55 @@ public class Solution {
             }
         }
         return count;
+    }
+}
+
+/* instruction: Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target. */
+public class Solution {
+    public List<List<Integer>> fourSum(int[] num, int target) {
+        int length = num.length;
+        List<List<Integer>> list = new LinkedList<List<Integer>>();
+        if(length < 4)
+            return list;
+        HashSet<List<Integer>> map = new HashSet<List<Integer>>();
+        Arrays.sort(num);
+        for(int i = 0; i < length - 3; i ++)
+        {
+            if(i > 0 && num[i] == num[i - 1])
+                continue;
+            for(int e = length - 1; e >= i + 3; e --)
+            {
+                if(e < length - 1 && num[e] == num[e + 1])
+                    continue;
+                int local = target - num[i] - num[e];
+                int start = i + 1;
+                int end = e - 1;
+                while(start < end)
+                {
+                    if(num[start] + num[end] > local)
+                        end --;
+                    else if(num[start] + num[end] < local)
+                        start ++;
+                    else
+                    {
+                        List<Integer> l = new LinkedList<Integer>();
+                        l.add(num[i]);
+                        l.add(num[start]);
+                        l.add(num[end]);
+                        l.add(num[e]);
+                        if(!map.contains(l))
+                        {
+                            list.add(l);
+                            map.add(l);
+                        }
+                        start ++;
+                        end --;
+                    }
+                }
+            }
+        }
+        return list;
+        
     }
 }
 
@@ -3038,6 +3198,21 @@ public boolean isPermutation(String a, String b){
     if(b.equals(""))
         return true;
     return false;
+}
+
+/* instruction: Given an unsorted integer array, find the first missing positive integer. */
+public class Solution {
+    public int firstMissingPositive(int[] A) {
+        int number = 1;
+        int length = A.length;
+        Arrays.sort(A);
+        for(int i = 0; i < length; i ++)
+        {
+            if(A[i] == number)
+                number ++;
+        }
+        return number;
+    }
 }
 
 /* instruction: replace the white space in an array with %20, assume the array has enough space and the length is the actual length */
@@ -3556,5 +3731,91 @@ List<LinkedList<TreeNode>> createLevelLinkedList(TreeNode root)
         }
     }
     return list;
+}
+
+/* find the inorder successor of a node n */
+public TreeNode inorderSucc(TreeNode n)
+{
+    if(n == null)
+        return null;
+    if(n.right != null)
+        return findLeftMostChild(n.right);
+    TreeNode parent = n.parent;
+    while(parent != null && parent.left != n) {
+        n = parent;
+        parent = parent.parent;
+    }
+    return n;
+
+}
+public TreeNode findLeftMostChild(TreeNode n)
+{
+    if(n == null)
+        return null;
+    while(n.left != null)
+        n = n.left;
+    return n;
+}
+
+/* instruction: find the common ancestor of two nodes */
+public boolean isOnSameSide(TreeNode root, TreeNode a)
+{
+    if(root == null)
+        return false;
+    if(root == a)
+        return true;
+    return isOnSameSide(root.left, a) || isOnSameSide(root.right, a);
+}
+public TreeNode findCommonAncestor(TreeNode a, TreeNode b, TreeNode root)
+{
+    if(a == null || b == null)
+        return null;
+    if(a == root || b == root)
+        return root;
+    boolean isALeft = isOnSameSide(root.left, a);
+    boolean isBLeft = isOnSameSide(root.left, b);
+
+    if(isALeft != isBLeft)
+        return root;
+    else if(isALeft)
+        return findCommonAncestor(a, b, root.left);
+    else
+        return findCommonAncestor(a, b, root.right);
+
+}
+
+
+/* find path sum, note: it doesn't need to start at root and end at leave */
+public int findTreeDepth(TreeNode n)
+{
+    if(n == null)
+        return 0;
+    return Math.max(findTreeDepth(n.left), findTreeDepth(n.right)) + 1;
+}
+public void pathSum(TreeNode n, int sum)
+{
+    int depth = findTreeDepth(n);
+    int array[] = new int[depth];
+    findSum(n, sum, array, 0);
+}
+public void findSum(TreeNode n, int sum, int[] array, int index)
+{
+    if(n == null)
+        return;
+    array[index] = n.val;
+    int curr = 0;
+    for(int i = index; i >= 0; i --)
+    {
+        curr += array[i];
+        if(curr == sum)
+        {
+            for(int j = index; j >=  i; j --)
+                System.out.print(array[j] + " ");
+            System.out.println("");
+        }
+    }
+    findSum(n.left, sum, array, index + 1);
+    findSum(n.right, sum, array, index + 1);
+
 }
 /*********************** cc 150 ends ***************************/
