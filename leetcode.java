@@ -496,6 +496,138 @@ public class Solution {
  * }
  */
 
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+
+/* instruction: Sort a linked list using insertion sort. */
+public class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        if(head == null || head.next == null)
+            return head;
+        ListNode pointer = head.next;
+        ListNode sortedList = head;
+        sortedList.next = null;
+        while(pointer != null)
+        {
+            ListNode current = pointer;
+            pointer = pointer.next;
+            boolean insertion = false;
+            ListNode pre = null;
+            for(ListNode i = sortedList; i != null; i = i.next)
+            {
+                if(i.val > current.val && pre == null)
+                    break;
+                if(i.val >= current.val && pre != null)
+                {
+                    pre.next = current;
+                    current.next = i;
+                    insertion = true;
+                    break;
+                }
+                pre = i;
+            }
+            if(insertion == false)
+            {
+                if(current.val < sortedList.val)
+                {
+                    current.next = sortedList;
+                    sortedList = current;
+                }
+                else
+                {
+                    pre.next = current;
+                    current.next = null;
+                }
+            }
+        }
+        return sortedList;
+    }
+}
+
+/* instruction: sort linked list in O(nlogn) */
+public class Solution {
+    public ListNode sortList(ListNode head) {
+        if(head == null || head.next == null)
+            return head;
+
+        int length = 0;
+        ListNode dummy = head;
+        while(dummy != null)
+        {
+            dummy = dummy.next;
+            length ++;
+        }
+        ListNode left = head, right = null;
+        ListNode dummy2 = head;
+        int half_count = 0;
+        if(length == 2)
+        {
+            right = head.next;
+            head.next = null;
+        }
+        else
+        {
+            while(dummy2 != null)
+            {
+                ListNode next = dummy2.next;
+                half_count ++;
+                if(half_count == length / 2)
+                {
+                    right = next;
+                    dummy2.next = null;
+                    break;
+                }
+                dummy2 = next;
+            }
+        }
+
+
+        left = sortList(left);
+        right = sortList(right);
+
+        ListNode h = merge(left, right);
+        return h;
+
+    }
+    public ListNode merge(ListNode a, ListNode b)
+    {
+        ListNode head = new ListNode(0);
+        ListNode dummy = head;
+        while(a != null && b != null)
+        {
+            if(a.val < b.val)
+            {
+                dummy.next = a;
+                a = a.next;
+            }
+            else
+            {
+                dummy.next = b;
+                b = b.next;
+            }
+            dummy = dummy.next;
+        }
+        if(a != null)
+        {
+            dummy.next = a;
+        }
+        if(b != null)
+        {
+            dummy.next = b;
+        }
+        return head.next;
+    }
+}
+
 /* instruction: You are given two linked lists representing two non-negative numbers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
  
  Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
@@ -544,6 +676,35 @@ public class Solution {
             pointer.next = node;
         }
         return head;
+    }
+}
+
+/* instruction: Given a list, rotate the list to the right by k places, where k is non-negative. */
+public class Solution {
+    public ListNode rotateRight(ListNode head, int k)
+    {
+        if(head == null || k == 0)
+            return head;
+        int length = 0;
+        ListNode pointer = head, previous = null;
+        while(pointer != null)
+        {
+            length ++;
+            previous = pointer;
+            pointer = pointer.next;
+        }
+        if(length == 1 || k % length == 0)
+            return head;
+        ListNode tail = previous;
+        pointer = head;
+        for(int i = 0; i < length - k % length; i ++)
+        {
+            previous = pointer;
+            pointer = pointer.next;
+        }
+        tail.next = head;
+        previous.next = null;
+        return pointer;
     }
 }
 
@@ -751,6 +912,23 @@ public class Solution {
                 current = current.next;
         }
         return head;
+    }
+}
+
+/* instruction: Reverse bits of a given 32 bits unsigned integer.
+ 
+ For example, given input 43261596 (represented in binary as 00000010100101000001111010011100), return 964176192 (represented in binary as 00111001011110000010100101000000). */
+public class Solution {
+    // you need treat n as an unsigned value
+    public int reverseBits(int n) {
+        long value = 0;
+        for(int i = 0; i < 32; i ++)
+        {
+            int lastBit = n & 1;
+            n = n >> 1;
+            value += Math.pow(2, 31 - i) * lastBit;
+        }
+        return (int)value;
     }
 }
 
@@ -1115,6 +1293,31 @@ public class Solution {
             count ++;
         }
         return matrix;
+    }
+}
+
+/* instruction: compute sqrt */
+public class Solution {
+    public int sqrt(int x) {
+        int low = 0, high = x;
+        int mid = (low + high) / 2;
+        if(x == 1)
+            return 1;
+        while(low < high)
+        {
+            mid = low + (high - low) / 2;
+            if(mid == x / mid)
+                return mid;
+            else if((mid + 1) == x / (mid + 1))
+                return mid + 1;
+            else if(mid < x / mid && (mid + 1) > x / (mid + 1))
+                return mid;
+            else if(mid > x / mid)
+                high = mid + 1;
+            else if(mid < x / mid)
+                low = mid - 1;
+        }
+        return mid;
     }
 }
 
