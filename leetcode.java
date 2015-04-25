@@ -508,6 +508,37 @@ public class Solution {
  * }
  */
 
+/* instruction: remove elements in Linked List */
+public class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode pointer = head;
+        ListNode pre = pointer;
+        while(pointer != null)
+        {
+            boolean moved = false;
+            ListNode next = pointer.next;
+            if(pointer.val == val)
+            {
+                if(pre == pointer)
+                {
+                    head = head.next;
+                }
+                else
+                {
+                    pre.next = pointer.next;
+                    moved = true;
+                }
+            }
+            if(!moved)
+                pre = pointer;
+            pointer = next;
+            if(pointer == head)
+                pre = pointer;
+        }
+        return head;
+    }
+}
+
 /* instruction: Sort a linked list using insertion sort. */
 public class Solution {
     public ListNode insertionSortList(ListNode head) {
