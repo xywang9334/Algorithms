@@ -293,6 +293,26 @@ public class Solution {
     }
 }
 
+/* instruction: reverse a linked list */
+public class Solution {
+    public ListNode reverseList(ListNode head) {
+        if(head == null)
+            return null;
+        ListNode pointer = head;
+        ListNode previous = null;
+        ListNode next;
+        while(pointer!= null)
+        {
+            next = pointer.next;
+            pointer.next = previous;
+            previous = pointer;
+            pointer = next;
+        }
+        head = previous;
+        return head;
+    }
+}
+
 /* instruction: Given a binary tree, return the preorder traversal of its nodes' values. */
 import java.util.Stack;
 public class Solution {
@@ -581,6 +601,46 @@ public class Solution {
             }
         }
         return sortedList;
+    }
+}
+
+/* instruction: determine happy number
+ A happy number is a number defined by the following process: Starting with any positive integer, replace the number by the sum of the squares of its digits, and repeat the process until the number equals 1 (where it will stay), or it loops endlessly in a cycle which does not include 1. Those numbers for which this process ends in 1 are happy numbers.
+*/
+public class Solution {
+    public boolean isHappy(int n) {
+        if(n <= 0)
+            return false;
+        HashSet<Integer> set = new HashSet<Integer>();
+        set.add(n);
+        while(n != 1)
+        {
+            ArrayList<Integer> list = getDigits(n);
+            n = getSquareSum(list);
+            if(set.contains(n))
+                return false;
+            set.add(n);
+        }
+        return true;
+    }
+    public int getSquareSum(ArrayList<Integer> list)
+    {
+        int n = 0;
+        for(Integer a: list)
+        {
+            n += a * a;
+        }
+        return n;
+    }
+    public ArrayList<Integer> getDigits(int n)
+    {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        while(n != 0)
+        {
+            list.add(n % 10);
+            n /= 10;
+        }
+        return list;
     }
 }
 
@@ -2079,6 +2139,33 @@ public class Solution {
     }
 }
 
+/* instruction: Count the number of prime numbers less than a non-negative number, n. */
+public class Solution {
+    public int countPrimes(int n) {
+        if(n <= 1)
+            return 0;
+        boolean prime[] = new boolean[n + 1];
+        for(int i = 2; i < n; i ++)
+            prime[i] = true;
+        int m = (int)Math.sqrt(n);
+        for(int i = 2; i <= m; i ++)
+        {
+            if(prime[i])
+            {
+                for(int j = i; j * i <= n; j ++)
+                {
+                    prime[j * i] = false;
+                }
+            }
+        }
+        int count = 0;
+        for(int i = 2; i <= n; i ++)
+            if(prime[i])
+                count ++;
+        return count;
+    }
+}
+
 /* instruction: Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero. */
 import java.util.List;
 import java.util.LinkedList;
@@ -2918,6 +3005,32 @@ public class Solution {
         List<String> ret = new LinkedList<String>();
         ret.addAll(ls);
         return ret;
+    }
+}
+
+/* instruction: You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security system connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+ 
+ Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight without alerting the police. */
+public class Solution {
+    public int rob(int[] nums) {
+        int length = nums.length;
+        if(length <= 0)
+            return 0;
+        if(length == 1)
+            return nums[0];
+        if(length == 2)
+            return Math.max(nums[0], nums[1]);
+        int dp[] = new int[length];
+        for(int i = 0; i < length; i ++)
+            dp[i] = 0;
+        dp[0] = nums[0];
+        dp[1] = Math.max(nums[1], nums[0]);
+        for(int i = 2; i < length; i ++)
+        {
+            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]);
+        }
+        return dp[length - 1];
+        
     }
 }
 
