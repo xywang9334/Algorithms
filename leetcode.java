@@ -51,6 +51,27 @@ public class Solution {
     }
 }
 
+/* instruction: invert binary tree */
+public class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        
+        if(root == null)
+            return null;
+        
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+        
+        invertTree(root.left);
+        invertTree(root.right);
+        
+        
+        return root;
+        
+        
+    }
+}
+
 /* instruction: Given a binary tree, determine if it is a valid binary search tree (BST). */
 public class Solution {
     public boolean isValidBST(TreeNode root) {
@@ -310,6 +331,23 @@ public class Solution {
         }
         head = previous;
         return head;
+    }
+}
+
+
+/* instruction: delete a single node in a singly linked list, given only that node */
+
+public class Solution {
+    public void deleteNode(ListNode node) {
+        ListNode pointer = node;
+        ListNode pre = node;
+        while(node.next != null)
+        {
+            node.val = node.next.val;
+            pre = node;
+            node = node.next;
+        }
+        pre.next = null;
     }
 }
 
@@ -1070,6 +1108,22 @@ public class Solution {
             prefix = prefix.substring(0,n);
         }
         return prefix;
+    }
+}
+
+/* calculate the total area shaded by two rectangle */
+public class Solution {
+    public int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+        int areaA = Math.abs(C - A) * Math.abs(B - D);
+        int areaB = Math.abs(E - G) * Math.abs(F - H);
+        int overlap = (Math.min(D, H) - Math.max(B, F)) * (Math.min(C, G) - Math.max(A, E));
+        if (overlap < 0)
+            return areaA + areaB;
+        else if (Math.min(D, H) - Math.max(B, F) < 0 && Math.min(C, G) - Math.max(A, E) < 0)
+            return areaA + areaB;
+        else
+            return areaA + areaB - overlap;
+        
     }
 }
 
