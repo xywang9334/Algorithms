@@ -98,3 +98,476 @@ class Trie:
 # trie = Trie()
 # trie.insert("somestring")
 # trie.search("key")
+
+
+
+#Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+#
+#For example,
+#"A man, a plan, a canal: Panama" is a palindrome.
+#"race a car" is not a palindrome.
+
+class Solution(object):
+    def isPalindrome(self, s):
+        """
+            :type s: str
+            :rtype: bool
+            """
+        if s == "":
+            return True
+        string = ''.join(e for e in s if e.isalnum()).lower()
+        return string == string[::-1]
+
+#
+#Given a non-negative number represented as an array of digits, plus one to the number.
+#
+#The digits are stored such that the most significant digit is at the head of the list.
+
+
+class Solution(object):
+    def plusOne(self, digits):
+        """
+            :type digits: List[int]
+            :rtype: List[int]
+            """
+        length = len(digits)
+        result = (digits[length - 1] + 1) % 10
+        carry = (digits[length - 1] + 1) / 10
+        digits[length - 1] = result
+        for i in reversed(xrange(length - 1)):
+            digits[i] = digits[i] + carry
+            if digits[i] >= 10:
+                digits[i] = digits[i] - 10
+                carry = 1
+            else:
+                carry = 0
+        if carry == 1:
+            digits.insert(0, 1)
+        return digits
+
+#Given a column title as appear in an Excel sheet, return its corresponding column number.
+#
+#For example:
+#    
+#    A -> 1
+#    B -> 2
+#    C -> 3
+#    ...
+#    Z -> 26
+#    AA -> 27
+#    AB -> 28
+
+class Solution(object):
+    def titleToNumber(self, s):
+        """
+            :type s: str
+            :rtype: int
+            """
+        length = len(s)
+        re = 0
+        i = 0
+        for char in s:
+            num = ord(char) - ord('A') + 1
+            re += num * 26 ** (length - i - 1)
+            i += 1
+        return re
+
+
+#Given a string s consists of upper/lower-case alphabets and empty space characters ' ', return the length of last word in the string.
+#
+#If the last word does not exist, return 0.
+#
+#Note: A word is defined as a character sequence consists of non-space characters only.
+class Solution(object):
+    def lengthOfLastWord(self, s):
+        """
+            :type s: str
+            :rtype: int
+            """
+        l = s.split()
+        length = len(l)
+        if length > 0:
+            return len(l[length - 1])
+        else:
+            return 0
+
+
+#Write a program to check whether a given number is an ugly number.
+#
+#Ugly numbers are positive numbers whose prime factors only include 2, 3, 5. For example, 6, 8 are ugly while 14 is not ugly since it includes another prime factor 7.
+#
+#Note that 1 is typically treated as an ugly number.
+
+class Solution(object):
+    def isUgly(self, num):
+        """
+            :type num: int
+            :rtype: bool
+            """
+        if num == 0:
+            return False
+        while num % 5 == 0 or num % 2 == 0 or num % 3 == 0:
+            if num % 5 == 0:
+                num /= 5
+            if num % 2 == 0:
+                num /= 2
+            if num % 3 == 0:
+                num /= 3
+        if num == 1:
+            return True
+        else:
+            return False
+
+
+#Given a non-negative integer num, repeatedly add all its digits until the result has only one digit.
+#
+#For example:
+#
+#Given num = 38, the process is like: 3 + 8 = 11, 1 + 1 = 2. Since 2 has only one digit, return it.
+
+class Solution(object):
+    def addDigits(self, num):
+        """
+            :type num: int
+            :rtype: int
+            """
+        while num / 10 != 0:
+            num = self.get_digits(num)
+        return num
+    
+    
+    def get_digits(self, num):
+        temp = num
+        sum = 0
+        while temp != 0:
+            sum += temp % 10
+            temp /= 10
+        return sum
+
+#Given a binary tree, return all root-to-leaf paths.
+#
+#For example, given the following binary tree:
+#
+#      1
+#    /   \
+#   2     3
+#    \
+#    5
+#All root-to-leaf paths are:
+#
+#["1->2->5", "1->3"]
+
+
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def binaryTreePaths(self, root):
+        """
+            :type root: TreeNode
+            :rtype: List[str]
+            """
+        l = list()
+        ls = list()
+        if not root:
+            return l
+        self.call_with_string(l, root, ls)
+        return ls
+    
+    def call_with_string(self, l, root, ls):
+        l.append(root.val)
+        if (not root.left) and (not root.right):
+            s = self.make_string(l)
+            ls.append(s)
+            l.pop()
+            return
+        if root.left and (not root.right):
+            self.call_with_string(l, root.left, ls)
+            l.pop()
+        elif root.right and (not root.left):
+            self.call_with_string(l, root.right, ls)
+            l.pop()
+        else:
+            self.call_with_string(l, root.left, ls)
+            self.call_with_string(l, root.right, ls)
+            l.pop()
+
+    def make_string(self, l):
+        s = ""
+        if not l:
+            return s
+        s += str(l[0])
+            length = len(l)
+            for i in xrange(1, length):
+                s += "->"
+                s+= str(l[i])
+        return s
+
+
+""" check to see if two strings are anagrams """
+class Solution(object):
+    def isAnagram(self, s, t):
+        """
+            :type s: str
+            :type t: str
+            :rtype: bool
+            """
+        d = dict()
+        for char in s:
+            d[char] = d.get(char, 0) + 1
+        for char in t:
+            d[char] = d.get(char, 0) - 1
+            if d.get(char) < 0:
+                return False
+        for key, value in d.items():
+            if value != 0:
+                return False
+        return True
+
+
+#Write a function to delete a node (except the tail) in a singly linked list, given only access to that node.
+#
+#Supposed the linked list is 1 -> 2 -> 3 -> 4 and you are given the third node with value 3, the linked list should become 1 -> 2 -> 4 after calling your function.
+
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+
+class Solution(object):
+    def deleteNode(self, node):
+        """
+            :type node: ListNode
+            :rtype: void Do not return anything, modify node in-place instead.
+            """
+        node.val = node.next.val
+        node.next = node.next.next
+
+
+# Find the common ancestor of a binary tree
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def lowestCommonAncestor(self, root, p, q):
+        """
+            :type root: TreeNode
+            :type p: TreeNode
+            :type q: TreeNode
+            :rtype: TreeNode
+            """
+        if (not self.covers(root, p)) or (not self.covers(root, q)):
+            return None
+        return self.helper_func(root, p, q)
+    
+    def covers(self, a, b):
+        if not a:
+            return False
+        if a == b:
+            return True
+        return (self.covers(a.left, b)) or (self.covers(a.right, b))
+    
+    def helper_func(self, root, p, q):
+        if not root:
+            return None
+        if root == p or root == q:
+            return root
+        p_on_left = self.covers(root.left, p)
+        q_on_left = self.covers(root.left, q)
+        if p_on_left != q_on_left:
+            return root
+        else:
+            if p_on_left:
+                return self.helper_func(root.left, p, q)
+            else:
+                return self.helper_func(root.right, p, q)
+
+# if the tree is a binary search tree
+class Solution(object):
+    def lowestCommonAncestor(self, root, p, q):
+        """
+            :type root: TreeNode
+            :type p: TreeNode
+            :type q: TreeNode
+            :rtype: TreeNode
+            """
+        if not root:
+            return None
+        if p==root or q==root:
+            return root
+        if p.val>q.val:
+            p,q=q,p
+        if p.val<root.val and q.val>root.val:
+            return root
+        if p.val>root.val:
+            return self.lowestCommonAncestor(root.right, p, q)
+        return self.lowestCommonAncestor(root.left, p, q)
+
+# determine if a linkedlist is a palindrome in O(N) time and O(1) space
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def isPalindrome(self, head):
+        """
+            :type head: ListNode
+            :rtype: bool
+            """
+        if not head:
+            return True
+    
+        slow = head
+        fast = head.next
+        pre = None
+        
+        # move and change the list to inverse linked list
+        while fast and fast.next:
+            tmp = slow.next
+            fast = fast.next.next
+            slow.next = pre
+            pre = slow
+            slow = tmp
+
+        left = slow
+        if not fast:
+            left = pre
+            right = slow.next
+            slow.next = pre
+        while right and left:
+            if right.val == left.val:
+                right = right.next
+                left = left.next
+            else:
+                return False
+        return True
+
+
+
+
+
+# implement a queue using list
+class Queue(object):
+    def __init__(self):
+        """
+            initialize your data structure here.
+            """
+        self.list1 = list()
+    
+    
+    def push(self, x):
+        """
+            :type x: int
+            :rtype: nothing
+            """
+        self.list1.append(x)
+    
+    
+    def pop(self):
+        """
+            :rtype: nothing
+            """
+        self.list1.pop()
+    
+    
+    def peek(self):
+        """
+            :rtype: int
+            """
+        if self.list1 != []:
+            return self.list1[0]
+        else:
+            return None
+
+
+    def empty(self):
+        """
+            :rtype: bool
+        """
+        return self.list1 == []
+
+
+# determine if a number is a power of 2
+class Solution(object):
+    def isPowerOfTwo(self, n):
+        """
+            :type n: int
+            :rtype: bool
+            """
+        if n == 0:
+            return False
+        while n % 2 == 0:
+            n /= 2
+        if n == 1:
+            return True
+        return False
+
+
+#Given a sorted integer array without duplicates, return the summary of its ranges.
+#
+#For example, given [0,1,2,4,5,7], return ["0->2","4->5","7"].
+
+class Solution(object):
+    def summaryRanges(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: List[str]
+            """
+        l = list()
+        if not nums:
+            return l
+        if len(nums) == 1:
+            l.append(str(nums[0]))
+            return l
+        counter = nums[0] + 1
+        start = counter
+        for num in nums[1:]:
+            if num == counter:
+                counter += 1
+            else:
+                if counter == start:
+                    l.append(str(counter - 1))
+                else:
+                    l.append(str(start - 1) + "->" + str(counter - 1))
+                counter = num + 1
+                start = num + 1
+            if num == nums[len(nums) - 1]:
+                if counter == start:
+                    l.append(str(counter - 1))
+                else:
+                    l.append(str(start - 1) + "->" + str(counter - 1))
+        return l
+
+
+# invert a binary tree
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def invertTree(self, root):
+        """
+            :type root: TreeNode
+            :rtype: TreeNode
+            """
+        if root == None:
+            return root
+        root.left, root.right = root.right, root.left
+        self.invertTree(root.left)
+        self.invertTree(root.right)
+        return root
