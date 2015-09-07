@@ -1078,3 +1078,40 @@ class Solution(object):
             return max(self.minDepth(root.left), self.minDepth(root.right)) + 1
         else:
         return min(self.minDepth(root.left), self.minDepth(root.right)) + 1
+
+# Find the majority element in an array
+class Solution(object):
+    def majorityElement(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: int
+            """
+        d = {}
+        length = len(nums)
+        for num in nums:
+            d[num] = d.get(num, 0) + 1
+            if d[num] > length / 2:
+                return num
+        return 0
+
+# Find the longest common prefix in a list of strings
+class Solution(object):
+    def longestCommonPrefix(self, strs):
+        """
+            :type strs: List[str]
+            :rtype: str
+            """
+        if strs == []:
+            return ""
+        l = map(len, strs)
+        length = min(l)
+        prefix = ""
+        for i in xrange(length):
+            temp = strs[0][i]
+            for s in strs:
+                if s[i] == temp:
+                    continue
+                else:
+                    return prefix
+            prefix += temp
+        return prefix
