@@ -1115,3 +1115,114 @@ class Solution(object):
                     return prefix
             prefix += temp
         return prefix
+
+# find the maximum depth for a binary tree
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def maxDepth(self, root):
+        """
+            :type root: TreeNode
+            :rtype: int
+            """
+        if not root:
+            return 0
+        if not root.left and not root.right:
+            return 1
+        
+        left = 1 + self.maxDepth(root.left)
+        right = 1 + self.maxDepth(root.right)
+        
+        return max(left, right)
+
+# check if two binary trees are the same
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def isSameTree(self, p, q):
+        """
+            :type p: TreeNode
+            :type q: TreeNode
+            :rtype: bool
+            """
+        
+        if not p and not q:
+            return True
+        elif p and not q:
+            return False
+        elif q and not p:
+            return False
+        
+        return p.val == q.val and self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+
+
+# determine if a binary tree is balanced
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def isBalanced(self, root):
+        """
+            :type root: TreeNode
+            :rtype: bool
+            """
+        if root == None:
+            return True
+        
+        left = self.max_depth(root.left)
+        right = self.max_depth(root.right)
+        if abs(left - right) > 1:
+            return False
+        return self.isBalanced(root.left) and self.isBalanced(root.right)
+    
+    def max_depth(self, root):
+        if not root:
+            return 0
+        if not root.left and not root.right:
+            return 1
+        return max(self.max_depth(root.left) + 1, self.max_depth(root.right) + 1)
+
+
+# Determine if a binary tree is a mirror of itself
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def isSymmetric(self, root):
+        """
+            :type root: TreeNode
+            :rtype: bool
+            """
+        if not root:
+            return True
+        return self.sym(root.left, root.right)
+    
+    def sym(self, p, q):
+        if not p and not q:
+            return True
+        elif p and not q:
+            return False
+        elif not p and q:
+            return False
+        elif p.val != q.val:
+            return False
+        return self.sym(p.left, q.right) and self.sym(q.left, p.right)
+
