@@ -1226,3 +1226,118 @@ class Solution(object):
             return False
         return self.sym(p.left, q.right) and self.sym(q.left, p.right)
 
+# level order traversal, iterative way
+from Queue import Queue
+
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def levelOrder(self, root):
+        """
+            :type root: TreeNode
+            :rtype: List[List[int]]
+            """
+        l = list()
+        if not root:
+            return l
+        q = Queue()
+        q.put(root)
+        while not q.empty():
+            l1 = list()
+            l2 = list()
+            while not q.empty():
+                node = q.get()
+                l1.append(node)
+                l2.append(node.val)
+            
+            for nodes in l1:
+                if nodes.left != None:
+                    q.put(nodes.left)
+                if nodes.right != None:
+                    q.put(nodes.right)
+            l.append(l2)
+        return l
+
+# binary tree view from right
+from Queue import Queue
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def rightSideView(self, root):
+        """
+            :type root: TreeNode
+            :rtype: List[int]
+            """
+        l = list()
+        if not root:
+            return l
+        q = Queue()
+        q.put(root)
+        while not q.empty():
+            l2 = list()
+            while not q.empty():
+                l2.append(q.get())
+            for nodes in l2:
+                if nodes.left:
+                    q.put(nodes.left)
+                if nodes.right:
+                    q.put(nodes.right)
+            l.append(l2[len(l2) - 1].val)
+        return l
+
+
+
+# BST iterator
+# Definition for a  binary tree node
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class BSTIterator(object):
+    def __init__(self, root):
+        """
+            :type root: TreeNode
+            """
+        self.l = list()
+        pointer = root
+        while pointer != None:
+            self.l.append(pointer)
+            pointer = pointer.left
+
+
+    def hasNext(self):
+    """
+        :rtype: bool
+        """
+            return self.l != []
+        
+        
+        
+    def next(self):
+        """
+            :rtype: int
+            """
+        curr = self.l.pop()
+        if curr.right:
+            curr = curr.right
+            while curr:
+                self.l.append(curr)
+                curr = curr.left
+        return curr.val
+
+
+# Your BSTIterator will be called like this:
+# i, v = BSTIterator(root), []
+# while i.hasNext(): v.append(i.next())
