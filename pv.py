@@ -1341,3 +1341,317 @@ class BSTIterator(object):
 # Your BSTIterator will be called like this:
 # i, v = BSTIterator(root), []
 # while i.hasNext(): v.append(i.next())
+
+
+# determine if a binary tree has a path that sums up to sum
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def hasPathSum(self, root, sum):
+        """
+            :type root: TreeNode
+            :type sum: int
+            :rtype: bool
+            """
+        if not root:
+            return False
+        if root.val == sum and not root.left and not root.right:
+            return True
+        return self.hasPathSum(root.left, sum - root.val) or  self.hasPathSum(root.right, sum - root.val)
+
+
+# binary tree pre order traversal
+class Solution(object):
+    def preorderTraversal(self, root):
+        """
+            :type root: TreeNode
+            :rtype: List[int]
+            """
+        stack = list()
+        answer = list()
+        if not root:
+            return answer
+        stack.append(root)
+        while stack != []:
+            v = stack.pop()
+            if v.right:
+                stack.append(v.right)
+            if v.left:
+                stack.append(v.left)
+            answer.append(v.val)
+        
+        return answer
+
+
+# binary tree inorder traversal
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def inorderTraversal(self, root):
+        """
+            :type root: TreeNode
+            :rtype: List[int]
+            """
+        stack = list()
+        answer = list()
+        s = set()
+        if not root:
+            return answer
+        stack.append(root)
+        while stack != []:
+            node = stack[-1]
+            if node.left and node.left not in s:
+                stack.append(node.left)
+                s.add(node.left)
+            else:
+                node = stack.pop()
+                if node.right:
+                    stack.append(node.right)
+                    s.add(node.right)
+                answer.append(node.val)
+        return answer
+
+# bottom up level order traversal
+from Queue import Queue
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def levelOrderBottom(self, root):
+        """
+            :type root: TreeNode
+            :rtype: List[List[int]]
+            """
+        queue = Queue()
+        answer = list()
+        if not root:
+            return answer
+        queue.put(root)
+        while not queue.empty():
+            
+            l = list()
+            l1 = list()
+            while not queue.empty():
+                element = queue.get()
+                l.append(element)
+                l1.append(element.val)
+            for element in l:
+                if element.left:
+                    queue.put(element.left)
+                if element.right:
+                    queue.put(element.right)
+            answer.append(l1)
+        
+        answer.reverse()
+                return answer
+
+# Given n, how many structurally unique BST's (binary search trees) that store values 1...n?
+class Solution(object):
+    def numTrees(self, n):
+        """
+            :type n: int
+            :rtype: int
+            """
+        l = list()
+        l.append(1)
+        l.append(1)
+        
+        for i in xrange(2, n + 1):
+            sum = 0
+            for j in xrange(i):
+                sum += l[j] * l[i - j - 1]
+            l.append(sum)
+        return l[-1]
+
+
+# return roof to leave path sums up to sum
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def pathSum(self, root, sum):
+        """
+            :type root: TreeNode
+            :type sum: int
+            :rtype: List[List[int]]
+            """
+        l = list()
+        if not root:
+            return l
+        if root and not root.left and not root.right:
+            if root.val == sum:
+                l.append([root.val])
+                return l
+            else:
+                return l
+        list_left = self.pathSum(root.left, sum - root.val)
+        if list_left:
+            for items in list_left:
+                items.insert(0, root.val)
+                l.append(items)
+        list_right = self.pathSum(root.right, sum - root.val)
+        if list_right:
+            for items in list_right:
+                items.insert(0, root.val)
+                l.append(items)
+        return l
+
+# Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.
+# You may assume all four edges of the grid are all surrounded by water.
+
+
+class Solution(object):
+    
+    def numIslands(self, grid):
+        """
+            :type grid: List[List[str]]
+            :rtype: int
+        """
+        if grid == []:
+            return 0
+        
+        number = 0
+        lengthx = len(grid)
+        lengthy = len(grid[0])
+        visited = [[False for x in xrange(lengthy)] for x in xrange(lengthx)]
+        for i in xrange(lengthx):
+            for j in xrange(lengthy):
+                if visited[i][j] == False and grid[i][j] == "1":
+                    number += 1
+                    self.helper_func(grid, i, j, lengthx, lengthy, visited)
+        
+        return number
+
+    def helper_func(self, grid, i, j, lengthx, lengthy, visited):
+        if i >= 0 and i < lengthx and j >= 0 and j < lengthy and not visited[i][j] and grid[i][j] == "1":
+            visited[i][j] = True
+            self.helper_func(grid, i + 1, j, lengthx, lengthy, visited)
+            self.helper_func(grid, i, j + 1, lengthx, lengthy, visited)
+            self.helper_func(grid, i - 1, j, lengthx, lengthy, visited)
+            self.helper_func(grid, i, j - 1, lengthx, lengthy, visited)
+
+#Given a binary tree
+#    
+#    struct TreeLinkNode {
+#        TreeLinkNode *left;
+#            TreeLinkNode *right;
+#                TreeLinkNode *next;
+#}
+#Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+#
+#Initially, all next pointers are set to NULL.
+
+class Solution(object):
+    def connect(self, root):
+        """
+            :type root: TreeLinkNode
+            :rtype: nothing
+            """
+        if not root:
+            return
+        if not root.left or not root.right:
+            return
+        if root.left and root.right:
+            root.left.next = root.right
+        if root.next:
+            root.right.next = root.next.left
+        self.connect(root.left)
+        self.connect(root.right)
+
+
+
+# binary tree recover from inorder and postorder
+class Solution(object):
+    def buildTree(self, inorder, postorder):
+        """
+            :type inorder: List[int]
+            :type postorder: List[int]
+            :rtype: TreeNode
+            """
+        if inorder == [] or postorder == []:
+            return None
+        
+        root = TreeNode(postorder.pop())
+        index = inorder.index(root.val)
+        root.right = self.buildTree(inorder[index + 1:], postorder)
+        root.left = self.buildTree(inorder[:index], postorder)
+        
+        return root
+
+
+# recover tree inorder and preorder
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def buildTree(self, preorder, inorder):
+        """
+            :type inorder: List[int]
+            :type postorder: List[int]
+            :rtype: TreeNode
+            """
+        if inorder == [] or preorder == []:
+            return None
+        
+        root = TreeNode(preorder.pop(0))
+        index = inorder.index(root.val)
+        root.right = self.buildTree(preorder[index:], inorder[index + 1:])
+        root.left = self.buildTree(preorder, inorder[:index])
+        
+    return root
+
+
+# Given a binary tree, flatten it to a linked list in-place.
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def flatten(self, root):
+        """
+            :type root: TreeNode
+            :rtype: void Do not return anything, modify root in-place instead.
+            """
+        if not root:
+            return
+        self.flatten_helper(root)
+    
+    def flatten_helper(self, root):
+        if not root.left and not root.right:
+            return root
+        left, right = root.left, root.right
+        remaining = root
+        if left:
+            root.left = None
+            root.right = left
+            remaining = self.flatten_helper(left)
+        if right:
+            remaining.right = right
+            remaining = self.flatten_helper(right)
+        
+        return remaining
