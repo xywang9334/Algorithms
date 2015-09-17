@@ -1655,3 +1655,137 @@ class Solution(object):
             remaining = self.flatten_helper(right)
         
         return remaining
+
+# implement prefix tree
+class TrieNode(object):
+    def __init__(self):
+        """
+            Initialize your data structure here.
+            """
+        self.children = {}
+        self.exist = False
+
+
+class Trie(object):
+    
+    def __init__(self):
+        self.root = TrieNode()
+        self.root.exist = True
+    
+    
+    def insert(self, word):
+        """
+            Inserts a word into the trie.
+            :type word: str
+            :rtype: void
+            """
+        pointer = self.root
+        for i in word:
+            if i in pointer.children:
+                pointer = pointer.children[i]
+            else:
+                pointer.children[i] = TrieNode()
+                pointer = pointer.children[i]
+        pointer.exist = True
+    
+    
+    def search(self, word):
+        """
+            Returns if the word is in the trie.
+            :type word: str
+            :rtype: bool
+            """
+        pointer = self.root
+        for i in word:
+            if i in pointer.children:
+                pointer = pointer.children[i]
+            else:
+                return False
+        return pointer.exist
+    
+    def startsWith(self, prefix):
+        """
+            Returns if there is any word in the trie
+            that starts with the given prefix.
+            :type prefix: str
+            :rtype: bool
+            """
+        pointer = self.root
+        for i in prefix:
+            if i not in pointer.children:
+                return False
+            pointer = pointer.children[i]
+        return True
+
+
+# Your Trie object will be instantiated and called as such:
+# trie = Trie()
+# trie.insert("somestring")
+# trie.search("key")
+
+#Design a data structure that supports the following two operations:
+#
+#void addWord(word)
+#bool search(word)
+#search(word) can search a literal word or a regular expression string containing only letters a-z or .. A . means it can represent any one letter.
+
+
+
+
+class TrieNode():
+    def __init__(self):
+        self.d = {}
+            self.exist = False
+
+class WordDictionary(object):
+    
+    def __init__(self):
+        """
+            initialize your data structure here.
+            """
+        self.root = TrieNode()
+        self.root.exist = True
+    
+    
+    def addWord(self, word):
+        """
+            Adds a word into the data structure.
+            :type word: str
+            :rtype: void
+            """
+        pointer = self.root
+        for i in word:
+            if i in pointer.d:
+                pointer = pointer.d[i]
+            else:
+                pointer.d[i] = TrieNode()
+                pointer = pointer.d[i]
+        pointer.exist = True
+    
+    
+    def search(self, word):
+        """
+            Returns if the word is in the data structure. A word could
+            contain the dot character '.' to represent any one letter.
+            :type word: str
+            :rtype: bool
+            """
+        pointer = self.root
+        start = 0
+        end = len(word)
+        return self.helper_func(word, pointer, start, end)
+    
+    def helper_func(self, word, pointer, start, end):
+        if start == end:
+            return pointer.exist
+        if word[start] != '.':
+            if word[start] in pointer.d:
+                return self.helper_func(word, pointer.d[word[start]], start + 1, end)
+            else:
+                return False
+        # apply dfs to every element in the dictionary
+        else:
+            for key, value in pointer.d.items():
+                if self.helper_func(word, value, start + 1, end):
+                    return True
+        return False
