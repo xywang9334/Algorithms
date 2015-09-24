@@ -1789,3 +1789,295 @@ class WordDictionary(object):
                 if self.helper_func(word, value, start + 1, end):
                     return True
         return False
+
+
+
+# time out for some reason
+#Given a positive integer n, find the least number of perfect square numbers (for example, 1, 4, 9, 16, ...) which sum to n.
+#
+#For example, given n = 12, return 3 because 12 = 4 + 4 + 4; given n = 13, return 2 because 13 = 4 + 9.
+class Solution(object):
+    def numSquares(self, n):
+        """
+            :type n: int
+            :rtype: int
+            """
+        l = list()
+        l.append(0)
+        for i in xrange(1, n + 1):
+            min_num = sys.maxint
+            j = 1
+            while j * j <= i:
+                min_num = min(min_num, l[i - j * j] + 1)
+                j += 1
+            l.append(min_num)
+        
+        return l[n]
+
+#
+#Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
+#
+#For example, given the array [−2,1,−3,4,−1,2,1,−5,4],
+#the contiguous subarray [4,−1,2,1] has the largest sum = 6.
+
+
+class Solution(object):
+    def maxSubArray(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: int
+            """
+        length = len(nums)
+        i = 1
+        sum = nums[0]
+        greatest_sum = sum
+        while i < length:
+            sum = max(nums[i], nums[i] + sum)
+            greatest_sum = max(greatest_sum, sum)
+            i += 1
+        return greatest_sum
+
+
+
+
+#There are a total of n courses you have to take, labeled from 0 to n - 1.
+#
+#Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+#
+#Given the total number of courses and a list of prerequisite pairs, is it possible for you to finish all courses?
+
+
+class Solution(object):
+    def canFinish(self, numCourses, prerequisites):
+        """
+            :type numCourses: int
+            :type prerequisites: List[List[int]]
+            :rtype: bool
+            """
+        if prerequisites == []:
+            return True
+        d = dict()
+        visited = [False for i in xrange(numCourses)]
+        for l in prerequisites:
+            pre = l[1]
+            course = l[0]
+            if pre in d:
+                d[pre].append(course)
+            else:
+                d[pre] = [course]
+        for i in xrange(numCourses):
+            pre = [False for j in xrange(numCourses)]
+            if self.cycle(i, d, visited, pre):
+                return False
+        return True
+    
+    
+    def cycle(self, courseNum, d, visited, pre):
+        if visited[courseNum]:
+            return False
+        if courseNum not in d:
+            return False
+        
+        if pre[courseNum]:
+            return True
+        pre[courseNum] = True
+        
+        
+        for i in d[courseNum]:
+            if self.cycle(i, d, visited, pre):
+                return True
+        
+            visited[courseNum] = True
+            
+                return False
+
+
+#Follow up for N-Queens problem.
+#
+#Now, instead outputting board configurations, return the total number of distinct solutions.
+
+class Solution(object):
+    def totalNQueens(self, n):
+        """
+            :type n: int
+            :rtype: int
+            """
+        if n < 1:
+            return 0
+        position = [-1 for i in xrange(n)]
+        start = 0
+        number = 0
+        return self.helper_func(n, position, start, number)
+
+    def helper_func(self, n, position, start, number):
+        result = 0
+        if start >= n:
+            return 1
+
+        for i in xrange(n):
+            available = True
+            for j in xrange(number):
+                if (position[j] == i) or (abs(position[j] - i) == abs(j - start)):
+                    available = False
+                    break
+        if available:
+            position[start] = i
+                result += self.helper_func(n, position, start + 1, number + 1)
+    return result
+
+
+
+#Given a 2D board and a word, find if the word exists in the grid.
+#
+#The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once.
+
+class Solution(object):
+    def exist(self, board, word):
+        """
+            :type board: List[List[str]]
+            :type word: str
+            :rtype: bool
+            """
+        length = len(board)
+        
+        if length == 0:
+            return len(word) == 0
+        
+        l = len(board[0])
+        
+        visited = [[False for i in xrange(l)] for i in xrange(length)]
+        
+        for i in xrange(length):
+            for j in xrange(l):
+                if self.dfs(i, j, length, word, board, l, visited):
+                    return True
+            
+    return False
+
+
+    def dfs(self, i, j, length, word, board, l, visited):
+        if len(word) == 0:
+            return True
+        
+        if i < 0 or i >= length or j < 0 or j >= l:
+            return False
+    
+        if visited[i][j]:
+            return False
+        
+        
+        if board[i][j] != word[0]:
+            return False
+    
+        visited[i][j] = True
+        
+        result = self.dfs(i - 1, j, length, word[1:], board, l, visited)
+        if result:
+            return True
+        result = result or self.dfs(i + 1, j, length, word[1:], board, l, visited)
+        if result:
+        return True
+        result = result or self.dfs(i, j + 1, length, word[1:], board, l, visited)
+        if result:
+            return True
+        result = result or self.dfs(i, j - 1, length, word[1:], board, l, visited)
+        
+        
+        visited[i][j] = False
+        
+        return result
+
+
+
+# Given a string S, find the longest palindromic substring in S. You may assume that the maximum length of S is 1000, and there exists one unique longest palindromic substring.
+# when find a single character, search left and right to find if there exists a palindrome substring
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+            :type s: str
+            :rtype: str
+            """
+        length = len(s)
+        max_length = 0
+        result = str()
+        for i in xrange(length):
+            if self.is_palindrome(s, i - max_length - 1, i):
+                result = s[i - max_length - 1: i + 1]
+                max_length += 2
+            elif self.is_palindrome(s, i - max_length, i):
+                result = s[i - max_length : i + 1]
+                max_length += 1
+        
+    return result
+
+    def is_palindrome(self, s, start, end):
+        if start < 0:
+            return False
+        
+        while start < end:
+            if s[start] == s[end]:
+                start += 1
+                end -= 1
+            else:
+                return False
+        return True
+
+
+
+# check if the parenthesis is valid
+class Solution(object):
+    def isValid(self, s):
+        """
+            :type s: str
+            :rtype: bool
+            """
+        stack = list()
+        for char in s:
+            if char in ['(', '{', '[']:
+                stack.append(char)
+            else:
+                if len(stack) != 0:
+                    c = stack.pop()
+                    a = str(c) + char
+                    if a not in ["()", "{}", "[]"]:
+                        return False
+            
+                else:
+                    return False
+
+        return len(stack) == 0
+
+
+# find all subsets of a given set
+
+class Solution(object):
+    def subsets(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: List[List[int]]
+            """
+        l = list()
+        answer = list()
+        answer.append(l)
+        nums.sort()
+        if not nums:
+            return answer
+        length = len(nums)
+        for i in xrange(1, length + 1):
+            # return value, subset list, total length, start position
+            self.get_subset(answer, l, nums, i, 0)
+        
+        return answer
+    
+    def get_subset(self, answer, l, nums, i, position):
+        if len(l) == i:
+            answer.append(copy.deepcopy(l))
+            return
+        
+        length = len(nums)
+        for k in xrange(position, length):
+            l.append(nums[k])
+            self.get_subset(answer, l, nums, i, k + 1)
+            l.pop()
+        
+        return
