@@ -2081,3 +2081,37 @@ class Solution(object):
             l.pop()
         
         return
+
+
+#Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+#
+#Each number in C may only be used once in the combination.
+class Solution(object):
+    def combinationSum2(self, candidates, target):
+        """
+            :type candidates: List[int]
+            :type target: int
+            :rtype: List[List[int]]
+            """
+        
+        candidates.sort()
+        answer = list()
+        single_answer = list()
+        self.find_answer(answer, single_answer, candidates, target)
+        
+        return answer
+    
+    def find_answer(self, answer, single_answer, candidates, target):
+        if target == 0:
+            answer.append(single_answer[:])
+            return
+    
+        length = len(candidates)
+        
+        for i in xrange(length):
+            if candidates[i] > target:
+                return
+            if i == 0 or candidates[i] != candidates[i - 1]:
+                self.find_answer(answer, single_answer + [candidates[i]], candidates[i + 1:], target - candidates[i])
+
+        return
