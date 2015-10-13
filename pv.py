@@ -2115,3 +2115,1088 @@ class Solution(object):
                 self.find_answer(answer, single_answer + [candidates[i]], candidates[i + 1:], target - candidates[i])
 
         return
+
+# Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+
+class Solution(object):
+    def combine(self, n, k):
+        """
+            :type n: int
+            :type k: int
+            :rtype: List[List[int]]
+            """
+        l = list()
+        answer = list()
+        self.helper_func(1, n, k, l, answer)
+        return answer
+    
+    def helper_func(self, start, n, k, l, answer):
+        if k == 0:
+            answer.append(l[:])
+            return
+        
+        for i in xrange(start, n + 1):
+            l.append(i)
+            self.helper_func(i + 1, n, k - 1, l, answer)
+            l.pop()
+
+
+# implement LRU
+class LRUCache(object):
+    
+    def __init__(self, capacity):
+        """
+            :type capacity: int
+            """
+        self.d = collections.OrderedDict()
+        self.rest = capacity
+    
+    
+    def get(self, key):
+        """
+            :rtype: int
+            """
+        if key not in self.d:
+            return -1
+        element = self.d[key]
+        del self.d[key]
+        self.d[key] = element
+        return element
+    
+    
+    def set(self, key, value):
+        """
+            :type key: int
+            :type value: int
+            :rtype: nothing
+            """
+        if key in self.d:
+            del self.d[key]
+            self.d[key] = value
+            return
+        if self.rest > 0:
+            self.d[key] = value
+            self.rest -= 1
+        else:
+            self.d.popitem(last=False)
+            self.d[key] = value
+
+#A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+#
+#Write a function to determine if a number is strobogrammatic. The number is represented as a string.
+#
+#For example, the numbers "69", "88", and "818" are all strobogrammatic.
+class Solution(object):
+    def isStrobogrammatic(self, num):
+        """
+            :type num: str
+            :rtype: bool
+            """
+        strobogramPair = dict()
+        strobogramPair['6'] = '9'
+        strobogramPair['9'] = '6'
+        strobogramPair['8'] = '8'
+        strobogramPair['0'] = '0'
+        strobogramPair['1'] = '1'
+        
+        length = len(str(num))
+        string = str(num)
+        for i in xrange(length):
+            if string[i] not in ['6', '9', '8', '0', '1']:
+                return False
+            if string[length - i - 1] not in ['6', '9', '8', '0', '1']:
+                return False
+            if strobogramPair[string[i]] != string[length - i - 1]:
+                return False
+        return True
+
+#An abbreviation of a word follows the form <first letter><number><last letter>. Below are some examples of word abbreviations:
+#
+#a) it                      --> it    (no abbreviation)
+#
+#1
+#b) d|o|g                   --> d1g
+#    
+#    1    1  1
+#        1---5----0----5--8
+#c) i|nternationalizatio|n  --> i18n
+#
+#1
+#    1---5----0
+#d) l|ocalizatio|n          --> l10n
+#Assume you have a dictionary and given a word, find whether its abbreviation is unique in the dictionary.
+#A word's abbreviation is unique if no other word from the dictionary has the same abbreviation.
+
+class ValidWordAbbr(object):
+    def __init__(self, dictionary):
+        """
+            initialize your data structure here.
+            :type dictionary: List[str]
+            """
+        self.d = dict()
+        self.wordList = dictionary[:]
+        for word in dictionary:
+            length = len(word)
+            abbr = word[0] + str(length) + word[-1]
+            if abbr in self.d:
+                self.d[abbr].append(word)
+            else:
+                self.d[abbr] = [word]
+
+
+    def isUnique(self, word):
+        """
+            check if a word is unique.
+            :type word: str
+            :rtype: bool
+        """
+        length = len(word)
+        abbr = word[0] + str(length) + word[-1]
+        if abbr not in self.d:
+            return True
+        else:
+            if len(self.d[abbr]) != 1:
+                return False
+            if word not in self.wordList:
+                return False
+            return True
+
+
+
+# Your ValidWordAbbr object will be instantiated and called as such:
+# vwa = ValidWordAbbr(dictionary)
+# vwa.isUnique("word")
+# vwa.isUnique("anotherWord")
+
+#
+#There is a fence with n posts, each post can be painted with one of the k colors.
+#
+#You have to paint all the posts such that no more than two adjacent fence posts have the same color.
+#
+#Return the total number of ways you can paint the fence.
+#
+
+class Solution(object):
+    def numWays(self, n, k):
+        """
+            :type n: int
+            :type k: int
+            :rtype: int
+            """
+        if n == 0 or k == 0:
+            return 0
+        if n == 1:
+            return k
+        same = k
+        different = k * (k - 1)
+        for i in xrange(3, n + 1):
+            same, different = different, (same + different) * (k - 1)
+        return same + different
+
+
+# runs slowly
+# find the closest value in binary tree
+class Solution(object):
+    def closestValue(self, root, target):
+        """
+            :type root: TreeNode
+            :type target: float
+            :rtype: int
+            """
+        d = dict()
+        smallest = abs(root.val - target)
+        smallest = self.helper_func(root, target, d, smallest)
+        return d[smallest].val
+    
+    
+    
+    def helper_func(self, root, target, d, smallest):
+        value = abs(root.val - target)
+        d[value] = root
+        if value < smallest:
+            smallest = value
+        if root.left:
+            smallest = self.helper_func(root.left, target, d, smallest)
+        if root.right:
+            smallest = self.helper_func(root.right, target, d, smallest)
+        return smallest
+
+
+# if the permutation can be a palindrome
+class Solution(object):
+    def canPermutePalindrome(self, s):
+        """
+            :type s: str
+            :rtype: bool
+            """
+        d = dict()
+        for char in s:
+            d[char] = d.get(char, 0) + 1
+        count_odd = 0
+        for key, value in d.items():
+            if value % 2:
+                count_odd += 1
+            if count_odd >= 2:
+                return False
+        return True
+
+# if word can be broken up into words in dictionary
+class Solution(object):
+    def wordBreak(self, s, wordDict):
+        """
+            :type s: str
+            :type wordDict: Set[str]
+            :rtype: bool
+            """
+        if not s:
+            return True
+        length = len(s)
+        words = [False for i in xrange(length)]
+        for i in reversed(xrange(length)):
+            if s[i:] in wordDict:
+                words[i] = True
+                continue
+            for j in xrange(i + 1, length):
+                if s[i:j] in wordDict and words[j]:
+                    words[i] = True
+                    break
+        return words[0]
+
+#Given an array of n integers nums and a target, find the number of index triplets i, j, k with 0 <= i < j < k < n that satisfy the condition nums[i] + nums[j] + nums[k] < target.
+#
+#For example, given nums = [-2, 0, 1, 3], and target = 2.
+#
+#Return 2.
+
+class Solution(object):
+    def threeSumSmaller(self, nums, target):
+        """
+            :type nums: List[int]
+            :type target: int
+            :rtype: int
+            """
+        nums.sort()
+        length = len(nums)
+        if length < 3:
+            return 0
+        count = 0
+        for i in xrange(length):
+            start = i + 1
+            end = length - 1
+            while start < end:
+                if nums[i] + nums[start] + nums[end] < target:
+                    count += end - start
+                    start += 1
+                else:
+                    end -= 1
+
+        return count
+
+
+
+# Given an unsorted array nums, reorder it in-place such that nums[0] <= nums[1] >= nums[2] <= nums[3]....
+class Solution(object):
+    def wiggleSort(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: void Do not return anything, modify nums in-place instead.
+            """
+        length = len(nums)
+        if length == 0 or length == 1:
+            return
+        for i in xrange(1, length, 2):
+            if nums[i - 1] > nums[i]:
+                nums[i - 1], nums[i] = nums[i], nums[i - 1]
+            
+            if i + 1 < length and nums[i] < nums[i + 1]:
+                nums[i + 1], nums[i] = nums[i], nums[i + 1]
+
+
+
+
+# kth smallest element in a binary search tree
+class Solution(object):
+    def kthSmallest(self, root, k):
+        """
+            :type root: TreeNode
+            :type k: int
+            :rtype: int
+            """
+        l = list()
+        pointer = root
+        while l or pointer:
+            if pointer:
+                l.append(pointer)
+                pointer = pointer.left
+            else:
+                pointer = l.pop()
+                if k > 1:
+                    k -= 1
+                else:
+                    return pointer.val
+                pointer = pointer.right
+
+
+
+#Given a board with m by n cells, each cell has an initial state live (1) or dead (0). Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) using the following four rules (taken from the above Wikipedia article):
+#
+#Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+#Any live cell with two or three live neighbors lives on to the next generation.
+#Any live cell with more than three live neighbors dies, as if by over-population..
+#Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+#Write a function to compute the next state (after one update) of the board given its current state.
+
+class Solution(object):
+    def gameOfLife(self, board):
+        """
+            :type board: List[List[int]]
+            :rtype: void Do not return anything, modify board in-place instead.
+            """
+        m = len(board)
+        n = len(board[0])
+        for i in xrange(m):
+            for j in xrange(n):
+                alive = 0
+                for p in xrange(-1, 2):
+                    for q in xrange(-1, 2):
+                        if self.checkAlive(board, p, q, i, j):
+                            alive += 1
+                alive -= board[i][j]
+                if alive < 2 and board[i][j]:
+                    board[i][j] |= 2
+                elif (alive == 2 or alive == 3) and board[i][j]:
+                    continue
+                elif alive > 3 and board[i][j]:
+                    board[i][j] |= 2
+                elif alive == 3 and not board[i][j]:
+                    board[i][j] |= 2
+    
+        for i in xrange(m):
+            for j in xrange(n):
+                if board[i][j] == 3:
+                    board[i][j] = 0
+                elif board[i][j] == 2:
+                    board[i][j] = 1
+
+
+    def checkAlive(self, board, p, q, i, j):
+        m = len(board)
+        n = len(board[0])
+        if i + p >= 0 and i + p < m and q + j >= 0 and q + j < n and board[i + p][j + q] & 1:
+            return True
+
+
+#Given an Iterator class interface with methods: next() and hasNext(), design and implement a PeekingIterator that support the peek() operation -- it essentially peek() at the element that will be returned by the next call to next().
+#
+#Here is an example. Assume that the iterator is initialized to the beginning of the list: [1, 2, 3].
+#
+#Call next() gets you 1, the first element in the list.
+#
+#Now you call peek() and it returns 2, the next element. Calling next() after that still return 2.
+#
+#You call next() the final time and it returns 3, the last element. Calling hasNext() after that should return false.
+
+
+# Below is the interface for Iterator, which is already defined for you.
+#
+# class Iterator(object):
+#     def __init__(self, nums):
+#         """
+#         Initializes an iterator object to the beginning of a list.
+#         :type nums: List[int]
+#         """
+#
+#     def hasNext(self):
+#         """
+#         Returns true if the iteration has more elements.
+#         :rtype: bool
+#         """
+#
+#     def next(self):
+#         """
+#         Returns the next element in the iteration.
+#         :rtype: int
+#         """
+
+class PeekingIterator(object):
+    def __init__(self, iterator):
+        """
+            Initialize your data structure here.
+            :type iterator: Iterator
+            """
+        self.l = list()
+        self.iter = iterator
+    
+    def peek(self):
+        """
+            Returns the next element in the iteration without advancing the iterator.
+            :rtype: int
+            """
+        if not self.l:
+            self.l.append(self.iter.next())
+        return self.l[0]
+    
+    
+    
+    def next(self):
+        """
+            :rtype: int
+            """
+        if self.l:
+            return self.l.pop()
+        else:
+            return self.iter.next()
+
+
+    def hasNext(self):
+    """
+        :rtype: bool
+        """
+            if self.l:
+            return True
+                return self.iter.hasNext()
+
+
+# Your PeekingIterator object will be instantiated and called as such:
+# iter = PeekingIterator(Iterator(nums))
+# while iter.hasNext():
+#     val = iter.peek()   # Get the next element but not advance the iterator.
+#     iter.next()         # Should return the same value as [val].
+
+
+
+#A peak element is an element that is greater than its neighbors.
+#
+#Given an input array where num[i] ≠ num[i+1], find a peak element and return its index.
+#
+#The array may contain multiple peaks, in that case return the index to any one of the peaks is fine.
+#
+#You may imagine that num[-1] = num[n] = -∞.
+#
+#For example, in array [1, 2, 3, 1], 3 is a peak element and your function should return the index number 2.
+
+# in o(nlogn) time, divide and conquer or binary search, can also find the maximum element in an array
+
+class Solution(object):
+    def findPeakElement(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: int
+            """
+        start = 0
+        end = len(nums) - 1
+        return self.helper_func(nums, start, end)
+    
+    def helper_func(self, nums, start, end):
+        middle = (start + end) / 2
+        if middle < len(nums) - 1 and nums[middle] < nums[middle + 1]:
+            return self.helper_func(nums, middle + 1, end)
+        elif middle > 0 and nums[middle] < nums[middle - 1]:
+            return self.helper_func(nums, start, middle - 1)
+        return middle
+
+
+#Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+#
+#For example, given n = 3, a solution set is:
+#
+#"((()))", "(()())", "(())()", "()(())", "()()()"
+
+class Solution(object):
+    def generateParenthesis(self, n):
+        """
+            :type n: int
+            :rtype: List[str]
+            """
+        result = str()
+        value = list()
+        self.helper_func(0, 0, n, result, value)
+        return value
+    
+    def helper_func(self, count_open, count_close, total, result, value):
+        if count_open < count_close:
+            return
+        if count_close == total and count_open == total:
+            value.append(result)
+            return
+        
+        if count_open == total:
+            for i in xrange(total - count_close):
+                result += ')'
+            value.append(result)
+            return
+        
+        self.helper_func(count_open + 1, count_close, total, result + '(', value)
+        self.helper_func(count_open, count_close + 1, total, result + ')', value)
+
+
+#Given a sorted integer array where the range of elements are [lower, upper] inclusive, return its missing ranges.
+#
+#For example, given [0, 1, 3, 50, 75], lower = 0 and upper = 99, return ["2", "4->49", "51->74", "76->99"].
+
+
+class Solution(object):
+    def findMissingRanges(self, nums, lower, upper):
+        """
+            :type nums: List[int]
+            :type lower: int
+            :type upper: int
+            :rtype: List[str]
+            """
+        l = list()
+        
+        
+        
+        if upper == lower and nums == []:
+            l.append(str(upper))
+            return l
+        if nums == []:
+            l.append(str(lower) + "->" + str(upper))
+            return l
+        
+        temp = self.makeStart(lower, nums[0])
+        if temp:
+            l.append(temp)
+        nums.append(upper + 1)
+        length = len(nums)
+        
+        for i in xrange(length - 1):
+            result = self.makeString(nums[i], nums[i + 1])
+            if result:
+                l.append(result)
+        return l
+    
+    def makeString(self, lower, upper):
+        if upper - lower == 1 or upper == lower:
+            return
+        if upper - lower == 2:
+            return str(lower + 1)
+        return str(lower + 1) + "->" + str(upper - 1)
+    
+    def makeStart(self, lower, upper):
+        lower = min(lower, upper)
+        upper = max(lower, upper)
+        if lower == upper:
+            return
+        if lower == upper - 1:
+            return str(lower)
+        else:
+            return str(lower) + "->" + str(upper - 1)
+
+
+
+# wildcard matching, slower solution
+class Solution(object):
+    def isMatch(self, s, p):
+        """
+            :type s: str
+            :type p: str
+            :rtype: bool
+            """
+        length_p = len(p)
+        length_s = len(s)
+        exist = [[False for i in xrange(length_p + 1)] for j in xrange(length_s + 1)]
+        exist[length_s][length_p] = True
+        for i in reversed(xrange(length_p)):
+            if p[i] == '*':
+                exist[length_s][i] = True
+            else:
+                break
+    
+        for i in reversed(xrange(length_s - 1)):
+            for j in reversed(xrange(length_p - 1)):
+                if s[i] == p[j] or p[j] == '?':
+                    exist[i][j] = exist[i + 1][j + 1]
+                elif p[j] == '*':
+                    exist[i][j] = exist[i][j + 1] or exist[i + 1][j]
+
+    return exist[0][0]
+
+# c++ faster solution
+#class Solution {
+#public:
+#    bool isMatch(string s, string p) {
+#        int  slen = s.size(), plen = p.size(), i, j, iStar=-1, jStar=-1;
+#        
+#        for(i=0,j=0 ; i<slen; ++i, ++j)
+#        {
+#            if(p[j]=='*')
+#            { //meet a new '*', update traceback i/j info
+#                iStar = i;
+#                jStar = j;
+#                --i;
+#            }
+#            else
+#            {
+#                if(p[j]!=s[i] && p[j]!='?')
+#                {  // mismatch happens
+#                    if(iStar >=0)
+#                    { // met a '*' before, then do traceback
+#                        i = iStar++;
+#                        j = jStar;
+#                    }
+#                    else return false; // otherwise fail
+#            }
+#    }
+#        }
+#        while(p[j]=='*') ++j;
+#        return j==plen;
+#    }
+#};
+
+#class Solution {
+#private:
+#    bool helper(const string &s, const string &p, int si, int pi, int &recLevel)
+#    {
+#        int sSize = s.size(), pSize = p.size(), i, curLevel = recLevel;
+#        bool first=true;
+#        while(si<sSize && (p[pi]==s[si] || p[pi]=='?')) {++pi; ++si;} //match as many as possible
+#        if(pi == pSize) return si == sSize; // if p reaches the end, return
+#        if(p[pi]=='*')
+#        { // if a star is met
+#            while(p[++pi]=='*'); //skip all the following stars
+#            if(pi>=pSize) return true; // if the rest of p are all star, return true
+#            for(i=si; i<sSize; ++i)
+#            {   // then do recursion
+#                if(p[pi]!= '?' && p[pi]!=s[i]) continue;
+#                if(first) {++recLevel; first = false;}
+#                if(helper(s, p, i, pi, recLevel)) return true;
+#                if(recLevel>curLevel+1) return false; // if the currently processed star is not the last one, return
+#            }
+#        }
+#            return false;
+#    }
+#    public:
+#        bool isMatch(string s, string p) {
+#            int recLevel = 0;
+#            return helper(s, p, 0, 0, recLevel);
+#    }
+#};
+
+#Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+#
+#Integers in each row are sorted in ascending from left to right.
+#Integers in each column are sorted in ascending from top to bottom.
+#For example,
+#
+#Consider the following matrix:
+#
+#[
+# [1,   4,  7, 11, 15],
+# [2,   5,  8, 12, 19],
+# [3,   6,  9, 16, 22],
+# [10, 13, 14, 17, 24],
+# [18, 21, 23, 26, 30]
+# ]
+#Given target = 5, return true.
+#
+#Given target = 20, return false.
+
+class Solution(object):
+    def searchMatrix(self, matrix, target):
+        """
+            :type matrix: List[List[int]]
+            :type target: int
+            :rtype: bool
+            """
+        m = len(matrix)
+        n = len(matrix[0])
+        for i in xrange(m):
+            if matrix[i][0] > target:
+                return False
+            else:
+                start = 0
+                end = n - 1
+                if matrix[i][start] == target or matrix[i][end] == target:
+                    return True
+                while start < end - 1:
+                    middle = (start + end) / 2
+                    if matrix[i][middle] == target:
+                        return True
+                    elif matrix[i][middle] < target:
+                        start = middle
+                    elif matrix[i][middle] > target:
+                        end = middle
+
+
+    return False
+
+# Design an algorithm to encode a list of strings to a string. The encoded string is then sent over the network and is decoded back to the original list of strings.
+
+class Codec:
+    
+    def encode(self, strs):
+        """Encodes a list of strings to a single string.
+            
+            :type strs: List[str]
+            :rtype: str
+            """
+        result = ''.join('%d:'%len(strings) + strings for strings in strs)
+        return result
+    
+    
+    def decode(self, s):
+        """Decodes a single string to a list of strings.
+            
+            :type s: str
+            :rtype: List[str]
+            """
+        length = len(s)
+        i = 0
+        result = list()
+        while i < length:
+            value = s.find(':', i)
+            i = int(s[i:value]) + 1 + value
+            result.append(s[value + 1: i])
+        return result
+
+
+#Implement an iterator to flatten a 2d vector.
+#
+#For example,
+#Given 2d vector =
+#
+#[
+# [1,2],
+# [3],
+# [4,5,6]
+# ]
+#By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,2,3,4,5,6].
+
+
+class Vector2D(object):
+    
+    def __init__(self, vec2d):
+        """
+            Initialize your data structure here.
+            :type vec2d: List[List[int]]
+            """
+        
+        self.vector = list()
+        for vec1 in vec2d:
+            if vec1 == []:
+                continue
+            self.vector.append(vec1)
+        self.m = len(self.vector)
+        self.n = 0
+        if self.m != 0:
+            self.n = len(self.vector[0])
+        self.current_x = 0
+        self.current_y = 0
+    
+    
+    def next(self):
+        """
+            :rtype: int
+            """
+        self.n = len(self.vector[self.current_x])
+        value = self.vector[self.current_x][self.current_y]
+        if self.current_y == self.n - 1:
+            self.current_x += 1
+            if self.current_x < self.m:
+                self.n = len(self.vector[self.current_x])
+            self.current_y = 0
+        else:
+            self.current_y += 1
+        return value
+    
+    
+    
+    
+    def hasNext(self):
+        """
+            :rtype: bool
+            """
+        return self.current_x < self.m and self.current_y < self.n
+
+
+# Your Vector2D object will be instantiated and called as such:
+# i, v = Vector2D(vec2d), []
+# while i.hasNext(): v.append(i.next())
+
+#A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+#
+#Find all strobogrammatic numbers that are of length = n.
+#
+#For example,
+#Given n = 2, return ["11","69","88","96"].
+
+# too slow
+# answer online
+
+#def findStrobogrammatic(self, n):
+#    self.ans = []
+#    self.findStr(n, "", "")
+#    return self.ans
+#
+#def findStr(self, n, str1, str2):
+#    if n == 0:
+#        self.ans.append(str1 + str2)
+#        return
+#    if n == 1:
+#        self.findStr(0, str1 + '0', str2)
+#        self.findStr(0, str1 + '1', str2)
+#        self.findStr(0, str1 + '8', str2)
+#    else:
+#        if str1 and str1[0] != '0':
+#            self.findStr(n-2, str1 + '0', '0' + str2)
+#        self.findStr(n-2, str1 + '1', '1' + str2)
+#        self.findStr(n-2, str1 + '6', '9' + str2)
+#        self.findStr(n-2, str1 + '8', '8' + str2)
+#        self.findStr(n-2, str1 + '9', '6' + str2)
+
+class Solution(object):
+    def findStrobogrammatic(self, n):
+        """
+            :type n: int
+            :rtype: List[str]
+            """
+        d = dict()
+        d['1'] = '1'
+        d['6'] = '9'
+        d['9'] = '6'
+        d['0'] = '0'
+        d['8'] = '8'
+        
+        l = list()
+        result = list()
+        self.helper_func(l, d, n, result)
+        return l
+    
+    def helper_func(self, l, d, end, result):
+        if len(result) == end:
+            if result[0] == '0':
+                return
+            test = "".join(char for char in result)
+            if test not in l:
+                l.append(test)
+            return
+        if end - len(result) == 1:
+            if result and result[0] == '0':
+                return
+            length = len(result)
+            result1 = result[:]
+            result1.insert(length / 2, '0')
+            l.append(''.join(char for char in result1))
+            result3 = result[:]
+            result3.insert(length / 2, '1')
+            l.append("".join(char for char in result3))
+            result2 = result[:]
+            result2.insert(length / 2, '8')
+            l.append("".join(char for char in result2))
+            
+            return
+        
+        
+        for key, value in d.items():
+            result.insert(0, key)
+            result.append(value)
+            self.helper_func(l, d, end, result)
+            result.pop(0)
+            result.pop()
+
+#Given two 1d vectors, implement an iterator to return their elements alternately.
+#
+#For example, given two 1d vectors:
+#
+#v1 = [1, 2]
+#v2 = [3, 4, 5, 6]
+#By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1, 3, 2, 4, 5, 6].
+
+class ZigzagIterator(object):
+    
+    def __init__(self, v1, v2):
+        """
+            Initialize your data structure here.
+            :type v1: List[int]
+            :type v2: List[int]
+            """
+        self.v1 = v1
+        self.v2 = v2
+        self.lengthV1 = len(v1)
+        self.lengthV2 = len(v2)
+        self.longer = len(v1) > len(v2)
+        self.counter = 0
+    
+    
+    def next(self):
+        """
+            :rtype: int
+            """
+        value = 0
+        if self.counter / 2 < min(self.lengthV1, self.lengthV2):
+            if self.counter % 2 == 0:
+                value = self.v1[self.counter / 2]
+            else:
+                value = self.v2[self.counter / 2]
+            self.counter += 1
+        else:
+            count = self.counter - min(self.lengthV1, self.lengthV2)
+            self.counter += 1
+            if self.longer:
+                return self.v1[count]
+            else:
+                return self.v2[count]
+        return value
+    
+    
+    def hasNext(self):
+        """
+            :rtype: bool
+            """
+        return self.counter < self.lengthV1 + self.lengthV2
+
+
+# Your ZigzagIterator object will be instantiated and called as such:
+# i, v = ZigzagIterator(v1, v2), []
+# while i.hasNext(): v.append(i.next())
+
+#Given n nodes labeled from 0 to n - 1 and a list of undirected edges (each edge is a pair of nodes), write a function to check whether these edges make up a valid tree.
+#
+#For example:
+#
+#Given n = 5 and edges = [[0, 1], [0, 2], [0, 3], [1, 4]], return true.
+#
+#Given n = 5 and edges = [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]], return false.
+
+class Solution(object):
+    def validTree(self, n, edges):
+        """
+            :type n: int
+            :type edges: List[List[int]]
+            :rtype: bool
+            """
+        l = [-1 for i in range(n)]
+        s = set()
+        for i,j in edges:
+            x = self.find(l, i)
+            y = self.find(l, j)
+            if x == y:
+                return False
+            self.union(l, x, y)
+        return len(edges) == n - 1
+    
+    
+    def find(self, l, i):
+        if l[i] == -1:
+            return i
+        return self.find(l, l[i])
+    
+    def union(self, parent, i, j):
+        xset = self.find(parent, i)
+        yset = self.find(parent, j)
+        parent[xset] = yset
+
+#Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
+#
+#If the fractional part is repeating, enclose the repeating part in parentheses.
+
+class Solution(object):
+    def fractionToDecimal(self, numerator, denominator):
+        """
+            :type numerator: int
+            :type denominator: int
+            :rtype: str
+            """
+        d = dict()
+        if denominator == 0:
+            return str(numerator)
+        l = list()
+        if (numerator < 0 and denominator > 0) or (numerator > 0 and denominator < 0):
+            l.append("-")
+        numerator = abs(numerator)
+        denominator = abs(denominator)
+        l.append(str(numerator / denominator))
+        if numerator % denominator == 0:
+            return ''.join(a for a in l)
+    
+    
+        l.append('.')
+        numerator = numerator % denominator
+        
+        while numerator % denominator:
+            numerator = numerator * 10
+            r = numerator / denominator
+            remain = numerator % denominator
+            test = r * 10 + remain
+            if test in d:
+                l.insert(d[test], '(')
+                l.append(')')
+                break
+            l.append(str(r))
+            d[test] = len(l) - 1
+            numerator = remain
+        return ''.join(a for a in l)
+
+# Nim Game
+class Solution(object):
+    def canWinNim(self, n):
+        """
+            :type n: int
+            :rtype: bool
+            """
+        return n % 4 != 0
+
+#Given a list of words and two words word1 and word2, return the shortest distance between these two words in the list.
+#
+#For example,
+#Assume that words = ["practice", "makes", "perfect", "coding", "makes"].
+#
+#Given word1 = “coding”, word2 = “practice”, return 3.
+#Given word1 = "makes", word2 = "coding", return 1.
+
+class Solution(object):
+    def shortestDistance(self, words, word1, word2):
+        """
+            :type words: List[str]
+            :type word1: str
+            :type word2: str
+            :rtype: int
+            """
+        length = len(words)
+        index1 = length
+        index2 = length
+        answer = sys.maxint
+        for i in xrange(length):
+            if words[i] == word1:
+                index1 = i
+                answer = min(answer, abs(index1 - index2))
+            if words[i] == word2:
+                index2 = i
+                answer = min(answer, abs(index1 - index2))
+        return answer
+
+#Say you have an array for which the ith element is the price of a given stock on day i.
+#
+#If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
+
+class Solution(object):
+    def maxProfit(self, prices):
+        """
+            :type prices: List[int]
+            :rtype: int
+            """
+        length = len(prices)
+        maxValue = 0
+        minValue = sys.maxint
+        for i in xrange(length):
+            minValue = min(minValue, prices[i])
+            maxValue = max(maxValue, prices[i] - minValue)
+        
+        return maxValue
+
+#Say you have an array for which the ith element is the price of a given stock on day i.
+#
+#Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+
+class Solution(object):
+    def maxProfit(self, prices):
+        """
+            :type prices: List[int]
+            :rtype: int
+            """
+        value = 0
+        length = len(prices)
+        for i in xrange(length - 1):
+            value += max(0, prices[i + 1] - prices[i])
+        return value
