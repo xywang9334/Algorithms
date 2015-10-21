@@ -1891,6 +1891,36 @@ class Solution(object):
             
                 return False
 
+# n queens print the board
+class Solution(object):
+    def solveNQueens(self, n):
+        """
+            :type n: int
+            :rtype: List[List[str]]
+            """
+        result = list()
+        path = list()
+        nums = [-1] * n
+        self.helper_func(result, nums, 0, path)
+        return result
+    
+    def helper_func(self, position, nums, index, path):
+        length = len(nums)
+        if length == index:
+            position.append(path)
+            return
+        for i in xrange(length):
+            nums[index] = i
+            if self.isValid(nums, index):
+                temp = '.' * length
+                self.helper_func(position, nums, index + 1, path + [temp[:i] + 'Q' + temp[i + 1:]])
+
+
+def isValid(self, nums, index):
+    for i in xrange(index):
+        if abs(index - i) == abs(nums[index] - nums[i]) or nums[index] == nums[i]:
+            return False
+        return True
 
 #Follow up for N-Queens problem.
 #
@@ -3200,3 +3230,756 @@ class Solution(object):
         for i in xrange(length - 1):
             value += max(0, prices[i + 1] - prices[i])
         return value
+
+# Given a digit string, return all possible letter combinations that the number could represent.
+
+
+class Solution(object):
+    def letterCombinations(self, digits):
+        """
+            :type digits: str
+            :rtype: List[str]
+            """
+        if digits == "":
+            return list()
+        d = dict()
+        d['2'] = "abc"
+        d['3'] = "def"
+        d['4'] = "ghi"
+        d['5'] = "jkl"
+        d['6'] = "mno"
+        d['7'] = "pqrs"
+        d['8'] = "tuv"
+        d['9'] = "wxyz"
+        result = []
+        digits = digits.replace('1', '')
+        digits = digits.replace('0', '')
+        self.helper_func(d, 0, digits, [], result)
+        return result
+    
+    def helper_func(self, d, start, digits, combination, result):
+        if start == len(digits):
+            result.append(''.join(char for char in combination))
+            return
+        for i in d[digits[start]]:
+            combination.append(i)
+            self.helper_func(d, start + 1, digits, combination, result)
+            combination.pop()
+
+
+#Design and implement a TwoSum class. It should support the following operations: add and find.
+#
+#add - Add the number to an internal data structure.
+#find - Find if there exists any pair of numbers which sum is equal to the value.
+class TwoSum(object):
+    
+    def __init__(self):
+        """
+            initialize your data structure here
+            """
+        self.d = {}
+    
+    
+    def add(self, number):
+        """
+            Add the number to an internal data structure.
+            :rtype: nothing
+            """
+        self.d[number] = self.d.get(number, 0) + 1
+    
+    
+    def find(self, value):
+        """
+            Find if there exists any pair of numbers which sum is equal to the value.
+            :type value: int
+            :rtype: bool
+            """
+        for key in self.d:
+            if value - key in self.d and (value - key != key or self.d[key] > 1):
+                return True
+        return False
+
+
+# Your TwoSum object will be instantiated and called as such:
+# twoSum = TwoSum()
+# twoSum.add(number)
+# twoSum.find(value)
+
+#Given a sorted array, remove the duplicates in place such that each element appear only once and return the new length.
+#
+#Do not allocate extra space for another array, you must do this in place with constant memory.
+
+class Solution(object):
+    def removeDuplicates(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: int
+            """
+        length = len(nums)
+        pos = 0
+        for i in xrange(length):
+            if i == 0 or nums[i] != nums[pos - 1]:
+                nums[pos] = nums[i]
+                pos += 1
+        return pos
+
+#A message containing letters from A-Z is being encoded to numbers using the following mapping:
+#
+#'A' -> 1
+#'B' -> 2
+#...
+#'Z' -> 26
+#Given an encoded message containing digits, determine the total number of ways to decode it.
+#
+#For example,
+#Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
+#
+#The number of ways decoding "12" is 2.
+
+class Solution(object):
+    def numDecodings(self, s):
+        """
+            :type s: str
+            :rtype: int
+            """
+        length = len(s)
+        if length == 0:
+            return 0
+        l = [0] * (length + 1)
+        l[0] = 1
+        l[1] = 1
+        if s[0] == '0':
+            l[1] = 0
+        for i in xrange(2, length + 1):
+            if s[i - 1] != '0':
+                l[i] = l[i - 1]
+            ten = int(s[i - 2])
+            unit = int(s[i - 1])
+            ten = 10 * ten + unit
+            if ten >= 10 and ten <= 26:
+                l[i] += l[i - 2]
+
+    return l[length]
+
+# spiral matrix
+class Solution(object):
+    def generateMatrix(self, n):
+        """
+            :type n: int
+            :rtype: List[List[int]]
+            """
+        l = [[0 for i in xrange(n)] for i in xrange(n)]
+        count = 0
+        i = 1
+        while i <= n * n:
+            for j in xrange(count, n - count):
+                l[count][j] = i
+                i += 1
+            for j in xrange(count + 1, n - count):
+                l[j][n - count - 1] = i
+                i += 1
+            for j in reversed(xrange(count, n - count -1)):
+                l[n - count - 1][j] = i
+                i += 1
+            for j in reversed(xrange(count + 1, n - count - 1)):
+                l[j][count] = i
+                i += 1
+            count += 1
+        return l
+
+
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def mergeTwoLists(self, l1, l2):
+        """
+            :type l1: ListNode
+            :type l2: ListNode
+            :rtype: ListNode
+            """
+        if not l1:
+            return l2
+        if not l2:
+            return l1
+        l_head = ListNode(0)
+        pointer = l_head
+        while l1 and l2:
+            if l1.val < l2.val:
+                pointer.next = ListNode(l1.val)
+                pointer = pointer.next
+                l1 = l1.next
+            else:
+                pointer.next = ListNode(l2.val)
+                pointer = pointer.next
+                l2 = l2.next
+        if l1:
+            while l1:
+                pointer.next = ListNode(l1.val)
+                l1 = l1.next
+                pointer = pointer.next
+        if l2:
+            while l2:
+                pointer.next = ListNode(l2.val)
+                l2 = l2.next
+                pointer = pointer.next
+        return l_head.next
+
+#Given an array of integers, find two numbers such that they add up to a specific target number.
+#
+#The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
+
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+            :type nums: List[int]
+            :type target: int
+            :rtype: List[int]
+            """
+        d = dict()
+        length = len(nums)
+        result = list()
+        for i in xrange(length):
+            if nums[i] in d:
+                result.append(d[nums[i]][1] + 1)
+                result.append(i + 1)
+                break
+            d[target - nums[i]] = [nums[i], i]
+        return result
+
+#Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+#
+#Note:
+#Elements in a triplet (a,b,c) must be in non-descending order. (ie, a ≤ b ≤ c)
+#The solution set must not contain duplicate triplets.
+
+class Solution(object):
+    def threeSum(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: List[List[int]]
+            """
+        length = len(nums)
+        nums.sort()
+        result = list()
+        for i in xrange(length):
+            start = nums[i]
+            if i > 0 and start == nums[i - 1]:
+                continue
+            left = i + 1
+            right = length - 1
+            while left < right:
+                temp = start + nums[left] + nums[right]
+                if temp == 0:
+                    result.append([start, nums[left], nums[right]])
+                    left += 1
+                    right -= 1
+                    while left < right:
+                        if nums[left] == nums[left - 1]:
+                            left += 1
+                        else:
+                            break
+                    while right > left:
+                        if nums[right] == nums[right + 1]:
+                            right -= 1
+                        else:
+                            break
+                elif temp < 0:
+                    left += 1
+                else:
+                    right -= 1
+        return result
+
+# Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.
+
+class Solution(object):
+    def fourSum(self, nums, target):
+        """
+            :type nums: List[int]
+            :type target: int
+            :rtype: List[List[int]]
+            """
+        length = len(nums)
+        nums.sort()
+        result = list()
+        for i in xrange(length):
+            if i > 0 and nums[i - 1] == nums[i]:
+                continue
+            start = nums[i]
+            for j in xrange(i + 1, length):
+                if j > i + 1 and nums[j] == nums[j - 1]:
+                    continue
+                middle1 = nums[j]
+                middle2 = j + 1
+                end = length - 1
+                while middle2 < end:
+                    temp = start + middle1 + nums[middle2] + nums[end]
+                    if temp == target:
+                        result.append([start, middle1, nums[middle2], nums[end]])
+                        middle2 += 1
+                        end -= 1
+                        while nums[middle2 - 1] == nums[middle2] and middle2 < end:
+                            middle2 += 1
+                        while nums[end + 1] == nums[end] and middle2 < end:
+                            end -= 1
+                    elif temp < target:
+                        middle2 += 1
+                    else:
+                        end -= 1
+        return result
+
+
+#Given a set of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+#
+#The same repeated number may be chosen from C unlimited number of times.
+class Solution(object):
+    def combinationSum(self, candidates, target):
+        """
+            :type candidates: List[int]
+            :type target: int
+            :rtype: List[List[int]]
+            """
+        candidates.sort()
+        answer = list()
+        single_answer = list()
+        self.find_answer(answer, single_answer, candidates, target)
+        
+        return answer
+    
+    def find_answer(self, answer, single_answer, candidates, target):
+        if target == 0:
+            answer.append(single_answer[:])
+            return
+        
+        length = len(candidates)
+        
+        for i in xrange(length):
+            if candidates[i] > target:
+                return
+            self.find_answer(answer, single_answer + [candidates[i]], candidates[i:], target - candidates[i])
+        
+    return
+
+#Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+#
+#(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+#
+#Find the minimum element.
+#
+#You may assume no duplicate exists in the array.
+
+class Solution(object):
+    def findMin(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: int
+            """
+        length = len(nums)
+        start = 0
+        end = length - 1
+        result = nums[0]
+        return self.helper_func(nums, start, end, result)
+    
+    def helper_func(self, nums, start, end, result):
+        if start > end:
+            return result
+        if nums[start] < result:
+            result = nums[start]
+        if nums[end] < result:
+            result = nums[end]
+        middle = (start + end) / 2
+        if nums[middle] < result:
+            result = nums[middle]
+        
+        if nums[middle] > nums[start]:
+            if result > nums[start] and result < nums[middle]:
+                return self.helper_func(nums, start + 1, end, result)
+            else:
+                return self.helper_func(nums, middle + 1, end, result)
+        if nums[end] > nums[middle]:
+            if result < nums[end] and result > nums[middle]:
+                return self.helper_func(nums, middle + 1, end, result)
+            else:
+                return self.helper_func(nums, start + 1, middle, result)
+        else:
+            p = self.helper_func(nums, start + 1, middle, result)
+            q = self.helper_func(nums, middle + 1, end, result)
+            return min(p, q)
+
+
+# The isBadVersion API is already defined for you.
+# @param version, an integer
+# @return a bool
+# def isBadVersion(version):
+
+class Solution(object):
+    def firstBadVersion(self, n):
+        """
+            :type n: int
+            :rtype: int
+            """
+        start = 1
+        end = n
+        while start + 1 < end:
+            middle = (start + end) / 2
+            if isBadVersion(middle):
+                end = middle
+            else:
+                start = middle
+        if isBadVersion(start):
+            return start
+        return end
+
+
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def getIntersectionNode(self, headA, headB):
+        """
+            :type head1, head1: ListNode
+            :rtype: ListNode
+            """
+        lengthA = 0
+        lengthB = 0
+        pointerA = headA
+        pointerB = headB
+        while pointerA:
+            pointerA = pointerA.next
+            lengthA += 1
+        while pointerB:
+            pointerB = pointerB.next
+            lengthB += 1
+        if lengthA == 0 or lengthB == 0:
+            return None
+        while lengthA < lengthB:
+            headB = headB.next
+            lengthB -= 1
+        while lengthB < lengthA:
+            headA = headA.next
+            lengthA -= 1
+        while headA and headB:
+            if headA == headB:
+                return headA
+            headA = headA.next
+            headB = headB.next
+        return None
+
+#You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two consecutive "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
+#
+#Write a function to compute all possible states of the string after one valid move.
+
+
+
+class Solution(object):
+    def generatePossibleNextMoves(self, s):
+        """
+            :type s: str
+            :rtype: List[str]
+            """
+        if not s:
+            return list()
+        l = list()
+        index = 0
+        self.helper_func(s, index, l)
+        return l
+    
+    def helper_func(self, s, index, l):
+        if index == len(s) - 1:
+            return
+        if index < len(s) - 1 and s[index] == s[index + 1]:
+            if s[index] == '+':
+                l.append(s[:index] + "--" + s[index + 2:])
+        self.helper_func(s, index + 1, l)
+
+# swap nodes in pair
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def swapPairs(self, head):
+        """
+            :type head: ListNode
+            :rtype: ListNode
+            """
+        if not head:
+            return None
+        pointer = head
+        nextPointer = pointer.next
+        fakeHead = ListNode(-1)
+        fakeHead.next = head
+        head = fakeHead
+        while head and head.next and head.next.next:
+            temp1 = head.next
+            temp2 = temp1.next
+            toNext = temp2.next
+            head.next = temp2
+            temp2.next = temp1
+            temp1.next = toNext
+            head = temp1
+        return fakeHead.next
+
+
+# Definition for binary tree with next pointer.
+# class TreeLinkNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+#         self.next = None
+
+class Solution(object):
+    def connect(self, root):
+        """
+            :type root: TreeLinkNode
+            :rtype: nothing
+            """
+        if not root:
+            return
+        l = list()
+        l.append(root)
+        while l:
+            length = len(l)
+            for i in xrange(length - 1):
+                l[i].next = l[i + 1]
+            l[length - 1].next = None
+            l1 = list()
+            while l:
+                node = l.pop(0)
+                if node.left:
+                    l1.append(node.left)
+                if node.right:
+                    l1.append(node.right)
+            l = l1[:]
+#
+#Given a positive integer, return its corresponding column title as appear in an Excel sheet.
+#
+#For example:
+#    
+#    1 -> A
+#    2 -> B
+#    3 -> C
+#    ...
+#    26 -> Z
+#    27 -> AA
+#    28 -> AB
+
+class Solution(object):
+    def convertToTitle(self, n):
+        """
+            :type n: int
+            :rtype: str
+            """
+        result = list()
+        while n:
+            divide = n % 26
+            if divide == 0:
+                divide = 26
+            result.insert(0, chr(divide + 64))
+            if divide == 26:
+                n -= 1
+            n /= 26
+        return ''.join(c for c in result)
+
+
+#Find the kth largest element in an unsorted array. Note that it is the kth largest element in the sorted order, not the kth distinct element.
+#
+#For example,
+#Given [3,2,1,5,6,4] and k = 2, return 5.
+class Solution(object):
+    def findKthLargest(self, nums, k):
+        """
+            :type nums: List[int]
+            :type k: int
+            :rtype: int
+            """
+        nums.sort(reverse = True)
+        return nums[k - 1]
+
+
+# Given an unsorted array of integers, find the length of the longest consecutive elements sequence. O(n) time
+class Solution(object):
+    def longestConsecutive(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: int
+            """
+        s1 = set()
+        result = 1
+        for num in nums:
+            s1.add(num)
+        for num in nums:
+            val = num
+            while val in s1:
+                s1.remove(val)
+                val -= 1
+            minimum = val + 1
+            val = num
+            while val + 1 in s1:
+                s1.remove(val + 1)
+                val += 1
+            maximum = val - minimum + 1
+            result = max(maximum, result)
+        return result
+
+
+# returns the permutation of a set
+class Solution(object):
+    def permute(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: List[List[int]]
+            """
+        l = list()
+        result = list()
+        self.helper_func(l, nums, result)
+        return result
+    
+    def helper_func(self, l, nums, result):
+        if len(l) == len(nums):
+            result.append(l[:])
+            return
+        for i in nums:
+            if i not in l:
+                l.append(i)
+                self.helper_func(l, nums, result)
+                l.pop()
+#Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+#
+#For example,
+#[1,1,2] have the following unique permutations:
+#[1,1,2], [1,2,1], and [2,1,1].
+
+class Solution(object):
+    def permuteUnique(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: List[List[int]]
+            """
+        length = len(nums)
+        visit = [False for i in xrange(length)]
+        l = list()
+        result = list()
+        nums.sort()
+        self.helper_func(visit, l, result, nums)
+        return result
+    
+    def helper_func(self, visit, l, result, nums):
+        if len(l) == len(nums):
+            result.append(l[:])
+            return
+        length = len(nums)
+        for i in xrange(length):
+            if i > 0 and nums[i] == nums[i - 1] and not visit[i - 1]:
+                continue
+            if not visit[i]:
+                visit[i] = True
+                l.append(nums[i])
+                self.helper_func (visit, l, result, nums)
+                l.pop()
+                visit[i] = False
+
+# find the lowest common ancestor of a binary tree
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def lowestCommonAncestor(self, root, p, q):
+        """
+            :type root: TreeNode
+            :type p: TreeNode
+            :type q: TreeNode
+            :rtype: TreeNode
+            """
+        if not root:
+            return None
+        if not p:
+            return root
+        if not q:
+            return root
+        if p == root or q == root:
+            return root
+        onLeft = self.lowestCommonAncestor(root.left, p ,q)
+        onRight = self.lowestCommonAncestor(root.right, p, q)
+        if onLeft and onRight:
+            return root
+        else:
+            if onLeft and not onRight:
+                return onLeft
+            else:
+                return onRight
+
+# rotate an image 90 degree counterclockwise
+class Solution(object):
+    def rotate(self, matrix):
+        """
+            :type matrix: List[List[int]]
+            :rtype: void Do not return anything, modify matrix in-place instead.
+            """
+        if not matrix:
+            return
+        length = len(matrix)
+        for i in xrange(length / 2):
+            for j in xrange((length + 1) / 2):
+                temp = matrix[i][j]
+                matrix[i][j] = matrix[length - j - 1][i]
+                matrix[length - j - 1][i] = matrix[length - i - 1][length - j - 1]
+                matrix[length - i - 1][length - j - 1] = matrix[j][length - i - 1]
+                matrix[j][length - i - 1] = temp
+
+#Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+#
+#Integers in each row are sorted from left to right.
+#The first integer of each row is greater than the last integer of the previous row.
+
+class Solution(object):
+    def searchMatrix(self, matrix, target):
+        """
+            :type matrix: List[List[int]]
+            :type target: int
+            :rtype: bool
+            """
+        if not matrix:
+            return False
+        lengthHorizontal = len(matrix)
+        lengthVertical = len(matrix[0])
+        start = 0
+        end = lengthHorizontal - 1
+        row = 0
+        while start <= end:
+            middle = (start + end) / 2
+            if matrix[middle][0] <= target and matrix[middle][lengthVertical - 1] >= target:
+                row = middle
+                break
+            elif matrix[middle][0] < target:
+                start = middle + 1
+            else:
+                end = middle - 1
+        start = 0
+        end = lengthVertical - 1
+        while start <= end:
+            middle = (start + end) / 2
+            if matrix[row][end] == target:
+                return True
+            if matrix[row][start] == target:
+                return True
+            if matrix[row][middle] == target:
+                return True
+            elif matrix[row][middle] < target:
+                start = middle + 1
+            else:
+                end = middle - 1
+        return False
