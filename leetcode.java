@@ -1317,6 +1317,39 @@ public class Solution {
     }
 }
 
+//Given an input string, reverse the string word by word. A word is defined as a sequence of non-space characters.
+//
+//The input string does not contain leading or trailing spaces and the words are always separated by a single space.
+
+public class Solution {
+    public void reverseWords(char[] s) {
+        // first rotate the word
+        int start = 0;
+        int length = s.length;
+        for(int i = 0; i < length; i ++) {
+            if(s[i] == ' ') {
+                reverse(start, i - 1, s);
+                start = i + 1;
+                
+            }
+            else if(i == length - 1) {
+                reverse(start, i, s);
+            }
+        }
+        reverse(0, length - 1, s);
+    }
+    
+    public void reverse(int start, int end, char []s) {
+        while (start < end) {
+            char temp = s[start];
+            s[start] = s[end];
+            s[end] = temp;
+            start ++;
+            end --;
+        }
+    }
+}
+
 /* instruction: The gray code is a binary numeral system where two successive values differ in only one bit.
  
  Given a non-negative integer n representing the total number of bits in the code, print the sequence of gray code. A gray code sequence must begin with 0. */
@@ -1741,6 +1774,42 @@ public class Solution {
             System.arraycopy(digits, 0, ret, 0, len);
         }
         return ret;
+    }
+}
+
+//Given an array of strings, group anagrams together.
+//
+//For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"],
+//Return:
+//
+//[
+//["ate", "eat","tea"],
+//["nat","tan"],
+//["bat"]
+//]
+
+public class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        List<List<String>> lls = new ArrayList<List<String>>();
+        HashMap<String, List<String>> hm = new HashMap<String, List<String>>();
+        Arrays.sort(strs);
+        for (String str : strs) {
+            char[] array = str.toCharArray();
+            Arrays.sort(array);
+            String temp = new String(array);
+            if (hm.containsKey(temp)) {
+                hm.get(temp).add(str);
+            }
+            else {
+                List<String> a = new ArrayList<String>();
+                a.add(str);
+                hm.put(temp, a);
+            }
+        }
+        for(Map.Entry<String, List<String>> entry: hm.entrySet()) {
+            lls.add(entry.getValue());
+        }
+        return lls;
     }
 }
 
@@ -3819,6 +3888,33 @@ public class Solution {
     }
 }
 
+
+//Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to a specific target number.
+//
+//The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
+public class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        HashMap<Integer, Integer> hm = new HashMap<Integer, Integer>();
+        int right = numbers.length - 1;
+        int left = 0;
+        int []result = new int[2];
+        while (left < right) {
+            if (numbers[left] + numbers[right] == target) {
+                result[0] = left + 1;
+                result[1] = right + 1;
+                break;
+            }
+            else if (numbers[left] + numbers[right] < target) {
+                left += 1;
+            }
+            else {
+                right -= 1;
+            }
+        }
+        return result;
+    }
+}
+
 /* instruction: Assume you have a method isSubstring which checks if one word is a substring of another. 
 Given two strings, s1 and s2, write code to check if s2 is a rotation of s1 using only one call to is Substring */
 
@@ -4219,4 +4315,162 @@ public void findSum(TreeNode n, int sum, int[] array, int index)
     findSum(n.right, sum, array, index + 1);
 
 }
+
+// 3 sum closest
+public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        int length = nums.length;
+        if (length < 3)
+            return 0;
+        int closest = nums[0] + nums[1] + nums[2];
+        Arrays.sort(nums);
+        for(int i = 0; i < nums.length; i ++) {
+            int first = nums[i];
+            int start = i + 1;
+            int end = nums.length - 1;
+            while (start < end) {
+                int s = first + nums[start] + nums[end];
+                if (s == target)
+                    return target;
+                if (Math.abs(s - target) < Math.abs(closest - target))
+                {
+                    closest = s;
+                }
+                if (s > target)
+                    end --;
+                if (s < target)
+                    start ++;
+            }
+        }
+        return closest;
+    }
+}
 /*********************** cc 150 ends ***************************/
+
+
+// Amazon OA
+public String longestPalindrome(String s) {
+    int n = s.length();
+    if(n == 0)
+        return "";
+    String longest = s.substring(0, 1);
+    for(int i = 0; i < n - 1; i ++) {
+    String p1 = expandAroundCenter(s, i, i, n);
+    if (p1.length() > longest.length())
+        longest = p1;
+    String p2 = expandAroundCenter(s, i, i + 1, n);
+    if (p2.length() > longest.length())
+        longest = p2;
+    }
+    return longest;
+}
+
+public String expandAroundCenter(String s, int a, int b, int length) {
+    int left = a, right = b;
+    while (left >= 0 && right < length && s.charAt(left) == s.charAt(right)) {
+        left --;
+        right ++;
+    }
+    return s.substring(left + 1, right);
+}
+
+
+
+public boolean isValidParenthesis(String s) {
+    int length = s.length();
+    Stack<Character> stack = new Stack<Character>();
+    for(int i = 0; i < length; i ++) {
+        if(stack.empty())
+            stack.push(s.charAt(i));
+        else if(s.charAt(i) - stack.peek() == 1 || s.charAt(i) - stack.peek() == 2)
+            stack.pop();
+        else
+            stack.push(s.charAt(i));
+    }
+    return stack.empty();
+}
+
+public int twoSumPair(int []nums, int pair) {
+    int length = nums.length;
+    if(nums == null || length < 2)
+        return 0;
+    HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+    int count = 0;
+    for(int i = 0; i < length; i ++) {
+        int rest = pair - nums[i];
+        if (map.containsKey(nums[i]))
+            count += map.get(nums[i]);
+        else if(!map.containsKey(rest))
+            map.put(rest, 1);
+        else
+        map.put(rest, map.get(rest) + 1);
+    }
+    return count;
+
+}
+
+
+public boolean isSubTree(TreeNode a, TreeNode b) {
+    if (a == null)
+        return false;
+    if (b == null)
+        return true;
+
+    return isSameTree(a, b) || isSubTree(a.left, b) || isSubTree(a.right, b);
+
+}
+
+public boolean isSameTree(TreeNode a, TreeNode b) {
+    if (a == null && b == null)
+        return true;
+    if (a != null && b == null)
+        return false;
+    if (a == null && b != null)
+        return false;
+    if (a != b)
+        return false;
+    return isSameTree(a.left, b.left) && isSameTree(a.right, b.right);
+}
+
+
+public ListNode reverse(ListNode a) {
+    if (a == null || a.next == null)
+        return a;
+    ListNode slow = a;
+    ListNode fast = a;
+    while(fast.next != null && fast.next.next != null) {
+        fast = fast.next.next;
+        slow = slow.next;
+    }
+    ListNode pre = slow.next;
+    ListNode current = pre.next;
+    while(current != null) {
+        pre.next = current.next;
+        current.next = slow.next;
+        slow.next = current;
+        pre = current.next;
+    }
+    return a;
+}
+
+
+public ListNode merge(ListNode a, ListNode b) {
+    ListNode head = new ListNode(-1);
+    ListNode current = head;
+    while (a != null && b != null) {
+        if (a.value < b.value) {
+            current.next = a;
+            a = a.next;
+        }
+        else {
+            current.next = b;
+            b = b.next;
+        }
+        current = current.next;
+    }
+    if (a != null)
+        current.next = a;
+    if (b != null)
+        current.next = b;
+    return head.next;
+}
