@@ -3983,3 +3983,143 @@ class Solution(object):
             else:
                 end = middle - 1
         return False
+
+
+# binary tree longest consecutive number
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def __init__(self):
+        self.longest = 1
+    def longestConsecutive(self, root):
+        """
+            :type root: TreeNode
+            :rtype: int
+            """
+        if not root:
+            return 0
+        self.helper_func(root, root.val, 0)
+        return self.longest
+    
+    def helper_func(self, root, expected, temp):
+        if not root:
+            if temp > self.longest:
+                self.longest = temp
+            return
+        if root.val == expected:
+            temp += 1
+            if temp > self.longest:
+                self.longest = temp
+        else:
+            temp = 1
+        
+        self.helper_func(root.left, root.val + 1, temp)
+        self.helper_func(root.right, root.val + 1, temp)
+
+
+#You are playing the following Bulls and Cows game with your friend: You write a 4-digit secret number and ask your friend to guess it, each time your friend guesses a number, you give a hint, the hint tells your friend how many digits are in the correct positions (called "bulls") and how many digits are in the wrong positions (called "cows"), your friend will use those hints to find out the secret number.
+#
+#For example:
+#
+#Secret number:  1807
+#Friend's guess: 7810
+#Hint: 1 bull and 3 cows. (The bull is 8, the cows are 0, 1 and 7.)
+class Solution(object):
+    def getHint(self, secret, guess):
+        """
+            :type secret: str
+            :type guess: str
+            :rtype: str
+            """
+        bull = 0
+        cow = 0
+        d1 = dict()
+        length = len(secret)
+        for i in xrange(length):
+            if secret[i] == guess[i]:
+                bull += 1
+            else:
+                d1[secret[i]] = d1.get(secret[i], 0) + 1
+                d1[guess[i]] = d1.get(guess[i], 0) - 1
+                if d1[secret[i]] <= 0:
+                    cow += 1
+                if d1[guess[i]] >= 0:
+                    cow += 1
+        return str(bull) + "A" + str(cow) + "B"
+#
+#Given an input string, reverse the string word by word.
+#
+#For example,
+#Given s = "the sky is blue",
+#return "blue is sky the".
+class Solution(object):
+    def reverseWords(self, s):
+        """
+            :type s: str
+            :rtype: str
+            """
+        l = s.split(" ")
+        if l == []:
+            return ""
+        length = len(l)
+        for i in xrange(length):
+            word = l.pop(0)
+            if word == "":
+                continue
+            l.append(word[::-1])
+        
+        
+        value = ' '.join(c for c in l)
+        return value[::-1]
+
+# search in a rotated list, duplicates allowed
+class Solution(object):
+    def search(self, nums, target):
+        """
+            :type nums: List[int]
+            :type target: int
+            :rtype: bool
+            """
+        start = 0
+        end = len(nums) - 1
+        while start <= end:
+            middle = (start + end) / 2
+            print nums[middle], nums[start], nums[end]
+            if nums[middle] == target or nums[start] == target or nums[end] == target:
+                return True
+            if nums[middle] < nums[end] or nums[middle] < nums[start]:
+                if target > nums[middle] and target < nums[end]:
+                    start = middle + 1
+                else:
+                    end = middle - 1
+            elif nums[middle] > nums[start] or nums[middle] > nums[end]:
+                if  target < nums[middle] and target > nums[start]:
+                    end = middle - 1
+                else:
+                    start = middle + 1
+            else:
+                end -= 1
+
+    return False
+
+#Given an unsorted array of integers, find the length of longest increasing subsequence.
+class Solution(object):
+    def lengthOfLIS(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: int
+            """
+        if not nums:
+            return 0
+        length = len(nums)
+        dp = [1] * length
+        for i in xrange(1, length):
+            for j in xrange(i):
+                if nums[i] > nums[j]:
+                    dp[i] = max(dp[i], dp[j] + 1)
+        return max(dp)

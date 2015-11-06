@@ -314,6 +314,46 @@ public class Solution {
     }
 }
 
+// determine if there is a cycle in the linked list
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast != null && fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast)
+                return true;
+        }
+        return false;
+    }
+}
+
+// return the beginning of cycle
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
+        boolean cycle = false;
+        while(fast != null && fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (fast == slow) {
+                cycle = true;
+                break;
+            }
+        }
+        if (!cycle)
+            return null;
+        slow = head;
+        while (fast != slow) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return fast;
+    }
+}
+
 /* instruction: reverse a linked list */
 public class Solution {
     public ListNode reverseList(ListNode head) {
@@ -3332,6 +3372,29 @@ public class Solution {
     }
 }
 
+
+//Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
+public class Solution {
+    public int maxArea(int[] height) {
+        int length = height.length;
+        int start = 0;
+        int end = length - 1;
+        int area = 0;
+        while (start < end) {
+            int h = Math.min(height[start], height[end]);
+            int tempArea = h * (end - start);
+            if (tempArea > area) {
+                area = tempArea;
+            }
+            if (height[start] < height[end])
+                start ++;
+            else
+                end --;
+        }
+        return area;
+    }
+}
+
 /* instruction: Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
  
  For example, given n = 3, a solution set is:
@@ -4473,4 +4536,334 @@ public ListNode merge(ListNode a, ListNode b) {
     if (b != null)
         current.next = b;
     return head.next;
+}
+
+
+public int[] fourInteger(int a, int b, int c, int d) {
+    int []result = new int[4];
+    result[0] = a;
+    result[1] = b;
+    result[2] = c;
+    result[3] = d;
+    Arrays.sort(result);
+    swap(result, 0, 1);
+    swap(result, 2, 3);
+    swap(result, 0, 3);
+    return result;
+}
+
+public void swap(int []result, int a, int b) {
+    int temp = result[a];
+    result[a] = result[b];
+    result[b] = temp;
+}
+
+
+public int[] windows(int []array, int k) {
+
+    int length = array.length;
+    int result[] = new int[length - k + 1];
+    for(int i = 0; i < length; i ++) {
+        int sum = 0;
+        if(i + k > length)
+            break;
+        for (int j = i; j < i + k; j ++)
+            sum += array[j];
+        result[i] = sum;
+    }
+    return result;
+}
+
+
+
+public int arithmeticSlice(int []array) {
+    int length = array.length;
+    if(length < 3)
+        return 0;
+    int count = 2;
+    int gap = array[1] - array[0];
+    int rvalue = 0;
+    for(int i = 1; i < length - 1; i ++) {
+        if (array[i + 1] - array[i] == gap)
+            count ++;
+        else {
+            gap = array[i + 1] - array[i];
+            if (count >= 3) {
+                rvalue += (count - 2) * (count - 1) / 2;
+            }
+            count = 2;
+        }
+    }
+    if(count >= 3)
+        rvalue += (count - 1) * (count - 2) / 2;
+    if (rvalue > 100000000)
+        rvalue = -1;
+    return rvalue;
+
+}
+
+
+public class leetcode {
+    private int min_value;
+    private int max_value;
+    public int amplitude(TreeNode a) {
+        if (a == null)
+            return 0;
+        min_value = a.value;
+        max_value = a.value;
+        helper_func(a);
+        return max_value - min_value;
+    }
+    
+    public void helper_func(TreeNode a) {
+        if (a == null)
+            return;
+        if (a.value < min_value)
+            min_value = a.value;
+        if (a.value > max_value)
+            max_value = a.value;
+        helper_func(a.left);
+        helper_func(a.right);
+        
+    }
+}
+
+
+public double roundRobin(int []arrival, int []execution, int quantum) {
+    int length = arrival.length;
+    if (length == 0)
+        return 0.0;
+    Queue<roundRobin> q = new LinkedList<roundRobin>();
+    int index = 0;
+    int current_time = 0;
+    int total_wait_time = 0;
+    while (!q.isEmpty() || index < length) {
+        if (q.isEmpty()) {
+            roundRobin rb = new roundRobin(arrival[index], execution[index]);
+            q.add(rb);
+            index ++;
+        }
+        else {
+            roundRobin r = q.poll();
+            total_wait_time += current_time - r.getArrival();
+            current_time += Math.min(quantum, r.getExecution());
+            if (r.getExecution() > quantum) {
+                q.add(new roundRobin(current_time, r.getExecution() - quantum));
+            }
+        }
+    }
+    return (float)total_wait_time / length;
+
+
+}
+
+
+
+public double shortestJobFirst(int []request, int []duration) {
+    int length = request.length;
+    if (length == 0)
+        return 0;
+    PriorityQueue<roundRobin> pq = new PriorityQueue<roundRobin>(new Comparator<roundRobin>() {
+        @Override
+        public int compare(roundRobin o1, roundRobin o2) {
+            if (o1.getExecution() == o2.getExecution())
+                return o1.getArrival() - o2.getArrival();
+            return o1.getExecution() - o2.getExecution();
+        }
+    });
+    int index = 0;
+    int waitTime = 0;
+    int currentTime = 0;
+    while (index < length || !pq.isEmpty()) {
+        if (pq.isEmpty()) {
+            pq.add(new roundRobin(request[index], duration[index]));
+            index ++;
+        }
+        else {
+            roundRobin r = pq.poll();
+            waitTime += currentTime - r.getArrival();
+            currentTime += r.getExecution();
+            while (index < length && request[index] < currentTime) {
+                pq.add(new roundRobin(request[index], duration[index]));
+                index ++;
+            }
+        }
+    }
+    return (double)waitTime / length;
+}
+
+
+public int cacheMiss(int []array, int size) {
+    int length = array.length;
+    if (length == 0)
+        return 0;
+    List<Integer> cache = new LinkedList<Integer>();
+    int miss = 0;
+    for(int i = 0; i < length; i ++) {
+        if (cache.contains(array[i])) {
+            cache.remove(new Integer(array[i]));
+        }
+        else {
+            miss ++;
+            if (cache.size() == size) {
+                cache.remove(0);
+            }
+        }
+        cache.add(array[i]);
+    }
+    return miss;
+}
+
+
+public int[] daysChange(int []days, int n) {
+    int length = days.length;
+    if (length == 0 || n == 0)
+        return days;
+    int []rvalue = new int[length + 2];
+    rvalue[0] = 0;
+    rvalue[length] = 0;
+    for(int i = 1; i <= length; i ++) {
+        rvalue[i] = days[i - 1];
+    }
+
+    for(int i = 0; i < n; i ++) {
+        int pre = rvalue[0];
+        for(int j = 1; j <= length; j ++) {
+            int temp = rvalue[j];
+            rvalue[j] = pre ^ rvalue[j + 1];
+            pre = temp;
+
+        }
+    }
+    return Arrays.copyOfRange(rvalue, 1, length + 1);
+}
+
+
+
+public int [][]rotateMatrix(int [][]array, boolean flag) {
+    int length = array.length;
+    if(length == 0)
+        return array;
+    int length1 = array[0].length;
+    int rvalue[][] = new int[length1][length];
+    for(int i = 0; i < length; i ++) {
+        for(int j = 0; j < length1; j ++) {
+            rvalue[j][i] = array[i][j];
+        }
+    }
+    if (flag) {
+        for(int i = 0; i < length1; i ++) {
+            for (int j = 0; j < length / 2; j ++) {
+                int temp = rvalue[i][j];
+                rvalue[i][j] = rvalue[i][length - j - 1];
+                rvalue[i][length - j - 1] = temp;
+            }
+        }
+    }
+    else {
+        for(int i = 0; i < length; i ++) {
+            for (int j = 0; j < length1 / 2; j ++) {
+                int temp = rvalue[j][i];
+                rvalue[j][i] = rvalue[length - i - 1][j];
+                rvalue[length - i - 1][j] = temp;
+            }
+        }
+
+    }
+    return rvalue;
+}
+
+
+public int pathSum(TreeNode a) {
+    if (a == null)
+        return 0;
+    int sum = a.value;
+    if (a.left != null && a.right == null)
+        return pathSum(a.left) + sum;
+    if (a.left == null && a.right != null)
+        return pathSum(a.right) + sum;
+    return Math.min(pathSum(a.left) + sum, pathSum(a.right) + sum);
+
+}
+
+
+public ListNode insertCircularList(ListNode a, int val) {
+    if (a == null) {
+        ListNode rvalue = new ListNode(val);
+        rvalue.next = rvalue;
+        return rvalue;
+    }
+    ListNode pointer = a.next;
+    while (pointer != a) {
+        if (pointer.value <= val && pointer.next.value >= val) {
+            break;
+        }
+        if (pointer.value < val && pointer.next.value < pointer.value)
+            break;
+        pointer = pointer.next;
+    }
+    ListNode b = new ListNode(val);
+    ListNode temp = pointer.next;
+    pointer.next = b;
+    b.next = temp;
+    return a;
+}
+
+
+
+public int GreatestCommonDivisor(int []a) {
+    int length = a.length;
+    if (length == 0 || length == 1)
+        return 0;
+    int gcd = a[0];
+    for(int i = 1; i < length; i ++) {
+        gcd = divisor(gcd, a[i]);
+    }
+    return gcd;
+}
+
+public int divisor(int a, int b) {
+    while(a != 0 && b != 0) {
+        int c = b;
+        b = a % b;
+        a = c;
+    }
+    return a+b; // either one is 0, so return the non-zero value
+}
+
+
+public class leetcode {
+    private int []fourDirectionX = new int[]{-1, 0, 0, 1};
+    private int []fourDirectionY = new int[]{0, -1, 1, 0};
+    public boolean hasPath(int [][]matrix) {
+        int length = matrix.length;
+        if (length == 0)
+            return true;
+        int length1 = matrix[0].length;
+        if (length1 == 0)
+            return true;
+        if (matrix[0][0] == 9) {
+            return true;
+        }
+        Queue<int[]> q = new LinkedList<int[]>();
+        q.offer(new int[]{0, 0});
+        matrix[0][0] = 1;
+        while (!q.isEmpty()) {
+            int[] current = q.poll();
+            for(int i = 0; i < 4; i ++) {
+                int next[] = new int[2];
+                next[0] = fourDirectionX[i] + current[0];
+                next[1] = fourDirectionY[i] + current[1];
+                if (next[0] >= 0 && next[0] < length && next[1] >= 0 && next[1] < length1) {
+                    if (matrix[next[0]][next[1]] == 9)
+                        return true;
+                    else if(matrix[next[0]][next[1]] == 0) {
+                        q.offer(next);
+                        matrix[next[0]][next[1]] = 1;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
