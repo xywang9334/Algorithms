@@ -1077,7 +1077,7 @@ class Solution(object):
         if not root.left or not root.right:
             return max(self.minDepth(root.left), self.minDepth(root.right)) + 1
         else:
-        return min(self.minDepth(root.left), self.minDepth(root.right)) + 1
+            return min(self.minDepth(root.left), self.minDepth(root.right)) + 1
 
 # Find the majority element in an array
 class Solution(object):
@@ -1552,9 +1552,9 @@ class Solution(object):
 #    
 #    struct TreeLinkNode {
 #        TreeLinkNode *left;
-#            TreeLinkNode *right;
-#                TreeLinkNode *next;
-#}
+#        TreeLinkNode *right;
+#        TreeLinkNode *next;
+#   }
 #Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
 #
 #Initially, all next pointers are set to NULL.
@@ -4123,3 +4123,25 @@ class Solution(object):
                 if nums[i] > nums[j]:
                     dp[i] = max(dp[i], dp[j] + 1)
         return max(dp)
+
+
+#Given a list of non negative integers, arrange them such that they form the largest number.
+#
+#For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330.
+class Solution(object):
+    def largestNumber(self, nums):
+        """
+            :type nums: List[int]
+            :rtype: str
+            """
+        if not nums:
+            return "0"
+        num = map(str, nums)
+        num.sort(cmp = self.compare)
+        return str(int(''.join(num)))
+    
+    def compare(self, a, b):
+        if int(a + b) > int (b + a):
+            return -1
+        else:
+            return 1
